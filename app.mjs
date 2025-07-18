@@ -2,13 +2,19 @@ import express from "express"
 import { useErrorHandler } from "./middlewares/errorHandler.mjs"
 import { initApp } from "./middlewares/appInit.mjs"
 import router from "./api/v1/routes/index.mjs"
-import connectToDb from "./db/connectToDb.mjs"
-
+import db from "./config/db.mjs"
+import syncTables from "./utils/syncTables.mjs"
+import SeedUploader from "./utils/uploadSeed.mjs"
+import UploadsManager from "./utils/UploadsManager.mjs"
 const app = express()
 
-connectToDb()
+db.connect()
+// syncTables()
+
+// SeedUploader.uploadAll()
 
 initApp(app)
+UploadsManager.initUploadFolder()
 app.use("/v1", router)
 useErrorHandler(app)
 

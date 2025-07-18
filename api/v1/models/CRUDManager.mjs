@@ -1,5 +1,3 @@
-import { sequelize } from "../../../db/connectToDb.mjs"
-
 class CRUDManager {
   constructor(model) {
     this.model = model
@@ -23,6 +21,17 @@ class CRUDManager {
       return null
     }
   }
+  async getOne(filters = {}, projection = []) {
+    try {
+      return await this.model.findOne({
+        where: filters,
+        attributes: projection,
+      })
+    } catch (error) {
+      console.log("Error while getting item by id: " + error.message)
+      return null
+    }
+  }
   async create(data) {
     try {
       return await this.model.create(data)
@@ -32,12 +41,14 @@ class CRUDManager {
   }
   async update(id, data) {
     try {
-      const [affectedRows] = await this.model.update(data, {
+      const item = await this.model.findByPk(id)
+      if (!item) return null
+      await this.model.update(data, {
         where: {
           id,
         },
       })
-      return affectedRows
+      return true
     } catch (error) {
       throw new Error("Error while updating item by id: " + error)
     }

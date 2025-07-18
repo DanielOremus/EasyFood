@@ -1,19 +1,10 @@
-import { sequelize } from "../../../../db/connectToDbSeq.mjs"
+import { sequelize } from "../../../../config/db.mjs"
 import { DataTypes } from "sequelize"
-import User from "../User/user.mjs"
+import User from "../user/User.mjs"
 
 const Location = sequelize.define(
   "Location",
   {
-    user_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      validate: {
-        notNull: {
-          msg: "User must be provided",
-        },
-      },
-    },
     address: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -31,19 +22,16 @@ const Location = sequelize.define(
       type: DataTypes.FLOAT,
       allowNull: false,
       validate: {
-        isFloat: {
-          msg: "lat must be float",
-        },
+        min: -90,
+        max: 90,
       },
-      min: 0.0,
     },
     lng: {
       type: DataTypes.FLOAT,
       allowNull: false,
       validate: {
-        isFloat: {
-          msg: "lat must be float",
-        },
+        min: -180,
+        max: 180,
       },
     },
   },
@@ -61,7 +49,5 @@ Location.belongsTo(User, {
   onDelete: "CASCADE",
   onUpdate: "RESTRICT",
 })
-
-await Location.sync()
 
 export default Location

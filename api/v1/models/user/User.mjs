@@ -1,12 +1,12 @@
 import { DataTypes } from "sequelize"
-import { sequelize } from "../../../../db/connectToDb.mjs"
-import bcrypt from "bcrypt"
+import { sequelize } from "../../../../config/db.mjs"
+import { hashPassword } from "../../../../middlewares/password.mjs"
 
 const User = sequelize.define(
   "User",
   {
     username: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(50),
       allowNull: false,
       validate: {
         notEmpty: {
@@ -19,7 +19,7 @@ const User = sequelize.define(
       },
     },
     email: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(100),
       allowNull: false,
       unique: true,
       validate: {
@@ -34,7 +34,7 @@ const User = sequelize.define(
       },
     },
     phone: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(20),
       allowNull: false,
       validate: {
         notEmpty: {
@@ -53,9 +53,6 @@ const User = sequelize.define(
     avatar_url: {
       type: DataTypes.STRING,
       allowNull: true,
-      notEmpty: {
-        msg: "Avatar url is required",
-      },
     },
     points: {
       type: DataTypes.INTEGER,
@@ -67,17 +64,19 @@ const User = sequelize.define(
     createdAt: "created_at",
     updatedAt: false,
     hooks: {
-      async beforeCreate(user) {
-        user.password = await bcrypt.hash(user.password, 10)
+      beforeCreate: async (user) => {
+        user.password = await hashPassword(user.password)
       },
-      async beforeUpdate(user) {
+      beforeUpdate: async (user) => {
+        console.log(user)
+
         if (user.changed("password"))
-          user.password = await bcrypt.hash(user.password, 10)
+          user.dataValues.password = await hashPassword(
+            user.dataValues.password
+          )
       },
     },
   }
 )
-
-await User.sync()
 
 export default User

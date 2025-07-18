@@ -2,10 +2,10 @@ import jwt from "jsonwebtoken"
 import config from "../config/default.mjs"
 
 class JWTHelper {
-  static async parseBearer(bearerToken, headers) {
-    let token
-    if (bearerToken.startsWith("Bearer")) token = bearerToken.slice(7)
+  static parseBearer(bearerToken, headers) {
     try {
+      let token
+      if (bearerToken.startsWith("Bearer ")) token = bearerToken.slice(7)
       const decoded = jwt.verify(token, JWTHelper.prepareSecret(headers))
       return decoded
     } catch (error) {
