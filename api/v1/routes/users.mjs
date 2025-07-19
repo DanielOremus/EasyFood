@@ -1,27 +1,52 @@
 import { Router } from "express"
 import UserController from "../controllers/UserController.mjs"
-import { ensureAuthenticated } from "../../../middlewares/auth.mjs"
+import {
+  ensureAuthenticated,
+  ownerChecker,
+} from "../../../middlewares/auth.mjs"
 import { checkSchema } from "express-validator"
 import UserValidator from "../../../validators/UserValidator.mjs"
 import upload from "../../../middlewares/multer.mjs"
+import LocationValidator from "../../../validators/LocationValidator.mjs"
+import LocationController from "../controllers/LocationController.mjs"
+import OrderController from "../controllers/OrderController.mjs"
 
 const router = Router()
 
 router.get("/", ensureAuthenticated, UserController.getUsersList)
 
-router.get("/:id", ensureAuthenticated, UserController.getUserById)
+router.get(
+  "/:id/locations",
+  ownerChecker("params", "id"),
+  LocationController.getUserLocations
+)
+
+router.get(
+  "/:userId/orders",
+  ownerChecker("params", "userId"),
+  OrderController.getUserOrders
+)
+
+router.get("/:id", ownerChecker("params", "id"), UserController.getUserById)
+
+router.post(
+  "/:id/locations",
+  ownerChecker("params", "id"),
+  checkSchema(LocationValidator.defaultSchema),
+  LocationController.addUserLocation
+)
 
 router.put(
-  "/",
-  ensureAuthenticated,
+  "/:id",
+  ownerChecker("params", "id"),
   upload.single("avatar"),
   checkSchema(UserValidator.updateSchema),
   UserController.updateUserById
 )
 
 router.put(
-  "/password",
-  ensureAuthenticated,
+  "/:id/password",
+  ownerChecker("params", "id"),
   checkSchema(UserValidator.newPasswordSchema),
   UserController.updatePassword
 )

@@ -31,14 +31,13 @@ const Reward = sequelize.define(
       },
     },
     discount: {
-      type: DataTypes.DECIMAL(10, 2),
-      allowNull: true,
-      defaultValue: 0.1,
+      type: DataTypes.FLOAT,
+      allowNull: false,
       validate: {
         min: 0,
       },
     },
-    points_required: {
+    pointsRequired: {
       type: DataTypes.INTEGER,
       allowNull: true,
       defaultValue: 0,
@@ -57,14 +56,15 @@ const Reward = sequelize.define(
       type: DataTypes.ENUM("percentage", "fixed", "free_item"),
       allowNull: false,
     },
-    expiry_date: {
+    expireDate: {
       type: DataTypes.DATE,
       allowNull: true,
     },
   },
   {
-    createdAt: false,
+    createdAt: "startDate",
     updatedAt: false,
+    underscored: true,
   }
 )
 

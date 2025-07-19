@@ -15,7 +15,7 @@ export const useErrorHandler = (app) => {
     //   res.locals.message = err.message
     //   res.locals.error = req.app.get("env") === "development" ? err : {}
 
-    const resMsg = config.APP_ENV === "development" ? err : err.message
+    // const resMsg = config.appEnv === "development" ? err : err.message
     // render the error page
     res.status(err.status || 500).json({ success: false, msg: err.message })
   })

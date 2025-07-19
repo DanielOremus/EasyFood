@@ -5,6 +5,10 @@ import User from "../user/User.mjs"
 const Location = sequelize.define(
   "Location",
   {
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
     address: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -36,18 +40,13 @@ const Location = sequelize.define(
     },
   },
   {
-    createdAt: false,
-    updatedAt: false,
+    timestamps: false,
+    underscored: true,
   }
 )
 
 Location.belongsTo(User, {
-  foreignKey: {
-    allowNull: false,
-    name: "user_id",
-  },
   onDelete: "CASCADE",
-  onUpdate: "RESTRICT",
 })
 
 export default Location

@@ -1,26 +1,22 @@
 import UserService from "../models/user/UserService.mjs"
-import JWTHelper from "../../../utils/JWTHelper.mjs"
 import { validationResult } from "express-validator"
-import { comparePasswords } from "../../../middlewares/password.mjs"
+
 class UserController {
   static async getUsersList(req, res) {
     try {
       const users = await UserService.getAll()
       res.json({ success: true, data: users })
     } catch (error) {
-      res.status(500).json({ success: false, msg: error.message })
+      res.status(error.code || 500).json({ success: false, msg: error.message })
     }
   }
   static async getUserById(req, res) {
     const id = req.params.id
     try {
       const user = await UserService.getById(id)
-      if (!user) {
-        return res.status(404).json({ success: false, msg: "User not found" })
-      }
       res.json({ success: true, data: user })
     } catch (error) {
-      res.status(500).json({ success: false, msg: error.message })
+      res.status(error.code || 500).json({ success: false, msg: error.message })
     }
   }
   static async register(req, res) {
@@ -30,28 +26,26 @@ class UserController {
 
     const { username, email, phone, password } = req.body
     try {
-      const isAlreadyUsed = await UserService.getOne({ email }, ["id"])
-      if (isAlreadyUsed)
-        return res
-          .status(400)
-          .json({ success: false, msg: "This email is already in use" })
+      const { user, token } = await UserService.register(
+        {
+          username,
+          email,
+          phone,
+          password,
+        },
+        req.headers
+      )
 
-      const user = await UserService.create({
-        username,
-        email,
-        phone,
-        password,
-      })
       res.status(201).json({
         success: true,
         msg: "User created",
         data: {
           user_id: user.id,
-          token: JWTHelper.prepareToken({ id: user.id }, req.headers),
+          token,
         },
       })
     } catch (error) {
-      res.status(500).json({ success: false, msg: error.message })
+      res.status(error.code || 500).json({ success: false, msg: error.message })
     }
   }
   static async login(req, res) {
@@ -61,38 +55,24 @@ class UserController {
 
     const { email, password } = req.body
     try {
-      const user = await UserService.getOne({ email }, [
-        "id",
-        "username",
-        "email",
-        "points",
-        "password",
-      ])
-      if (!user)
-        return res
-          .status(400)
-          .json({ success: false, msg: "Incorrect email or password" })
-
-      const isSame = await comparePasswords(password, user.password)
-      if (!isSame)
-        return res
-          .status(400)
-          .json({ success: false, msg: "Incorrect email or password" })
+      const { user, token } = await UserService.login(
+        { email, password },
+        req.headers
+      )
 
       res.json({
         success: true,
         data: {
-          token: JWTHelper.prepareToken({ id: user.id }, req.header),
+          token,
           user: {
             id: user.id,
             username: user.username,
-            email: user.email,
             points: user.points,
           },
         },
       })
     } catch (error) {
-      res.status(500).json({ success: false, msg: error.message })
+      res.status(error.code || 500).json({ success: false, msg: error.message })
     }
   }
   static async updateUserById(req, res) {
@@ -100,27 +80,24 @@ class UserController {
     if (!errors.isEmpty())
       return res.status(400).json({ success: false, msg: errors.array() })
 
-    const id = req.user.id
+    const id = req.params.id
     const { username, phone, avatarUrl } = req.body
 
     let avatar = avatarUrl
-    try {
-      if (req.file) {
-        avatar = req.file
-      }
 
-      const affectedRows = await UserService.update(id, {
+    if (req.file) {
+      avatar = req.file
+    }
+    try {
+      const user = await UserService.update(id, {
         username,
         phone,
         avatar,
       })
-      if (!affectedRows)
-        return res.status(404).json({ success: false, msg: "User not found" })
 
-      const user = await UserService.getById(id)
       res.json({ success: true, data: user })
     } catch (error) {
-      res.status(500).json({ success: false, msg: error.message })
+      res.status(error.code || 500).json({ success: false, msg: error.message })
     }
   }
   static async updatePassword(req, res) {
@@ -128,28 +105,18 @@ class UserController {
     if (!errors.isEmpty())
       return res.status(400).json({ success: false, msg: errors.array() })
 
-    const id = req.user.id
+    const id = req.params.id
     const { password, newPassword } = req.body
 
     try {
-      const user = await UserService.getOne({ id }, ["password"])
-
-      if (!user)
-        return res.status(404).json({ success: false, msg: "User not found" })
-
-      const isSame = await comparePasswords(password, user.password)
-      if (!isSame)
-        return res
-          .status(400)
-          .json({ success: false, msg: "Incorrect password" })
-
-      await UserService.update(id, {
-        password: newPassword,
+      await UserService.updatePassword(id, {
+        newPassword,
+        password,
       })
 
       res.json({ success: true, msg: "Password was changed successfully" })
     } catch (error) {
-      res.status(500).json({ success: false, msg: error.message })
+      res.status(error.code || 500).json({ success: false, msg: error.message })
     }
   }
 }

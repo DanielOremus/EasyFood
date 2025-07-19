@@ -1,10 +1,15 @@
 import { sequelize } from "../../../../config/db.mjs"
 import { DataTypes } from "sequelize"
 import Restaurant from "../restaurant/Restaurant.mjs"
+// import OrderItem from "../order_item/OrderItem.mjs"
 
 const Dish = sequelize.define(
   "Dish",
   {
+    restaurantId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
     name: {
       type: DataTypes.STRING(50),
       allowNull: false,
@@ -38,7 +43,7 @@ const Dish = sequelize.define(
         min: 0.0,
       },
     },
-    img_url: {
+    imageUrl: {
       type: DataTypes.STRING,
       allowNull: true,
     },
@@ -95,24 +100,24 @@ const Dish = sequelize.define(
         },
       },
     },
-    is_available: {
+    isAvailable: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: true,
     },
   },
   {
-    createdAt: false,
-    updatedAt: false,
+    timestamps: false,
+    underscored: true,
   }
 )
 
 Dish.belongsTo(Restaurant, {
-  foreignKey: {
-    name: "restaurant_id",
-    allowNull: false,
-  },
   onDelete: "CASCADE",
+  foreignKey: {
+    name: "restaurantId",
+  },
 })
+Restaurant.hasMany(Dish, { foreignKey: "restaurantId" })
 
 export default Dish

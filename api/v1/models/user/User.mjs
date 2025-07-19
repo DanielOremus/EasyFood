@@ -50,7 +50,7 @@ const User = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    avatar_url: {
+    avatarUrl: {
       type: DataTypes.STRING,
       allowNull: true,
     },
@@ -61,15 +61,13 @@ const User = sequelize.define(
     },
   },
   {
-    createdAt: "created_at",
     updatedAt: false,
+    underscored: true,
     hooks: {
       beforeCreate: async (user) => {
         user.password = await hashPassword(user.password)
       },
       beforeUpdate: async (user) => {
-        console.log(user)
-
         if (user.changed("password"))
           user.dataValues.password = await hashPassword(
             user.dataValues.password

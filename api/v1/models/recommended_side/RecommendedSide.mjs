@@ -5,6 +5,10 @@ import Dish from "../dish/Dish.mjs"
 const RecommendedSide = sequelize.define(
   "RecommendedSide",
   {
+    dishId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
     name: {
       type: DataTypes.STRING(50),
       allowNull: false,
@@ -26,14 +30,10 @@ const RecommendedSide = sequelize.define(
       },
     },
   },
-  { tableName: "recommended_sides", createdAt: false, updatedAt: false }
+  { timestamps: false, underscored: true }
 )
 
 RecommendedSide.belongsTo(Dish, {
-  foreignKey: {
-    name: "dish_id",
-    allowNull: false,
-  },
   onDelete: "CASCADE",
 })
 

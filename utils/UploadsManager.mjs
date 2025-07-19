@@ -1,6 +1,7 @@
 import fs from "fs/promises"
 import { __dirname } from "./path.mjs"
 import path from "path"
+import { debugLog } from "./logger.mjs"
 
 class UploadsManager {
   static uploadsFolderPath = path.join(__dirname, "../uploads")
@@ -27,7 +28,8 @@ class UploadsManager {
     } catch (error) {
       if (error.code === "ENOENT") return false
 
-      console.log(error)
+      debugLog(error)
+
       throw error
     }
   }
@@ -38,7 +40,8 @@ class UploadsManager {
       await fs.unlink(path)
     } catch (error) {
       if (error.code === "ENOENT") return false
-      console.log(error)
+      debugLog(error)
+
       throw error
     }
   }
@@ -47,7 +50,8 @@ class UploadsManager {
       const folderPath = UploadsManager.checkSubfolder(subfolder)
       return `${folderPath}/${fileName}`
     } catch (error) {
-      console.log(error)
+      debugLog(error)
+
       throw error
     }
   }
@@ -63,7 +67,8 @@ class UploadsManager {
 
       return relativePath
     } catch (error) {
-      console.log(error)
+      debugLog(error)
+
       throw error
     }
   }

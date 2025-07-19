@@ -1,22 +1,35 @@
 import { sequelize } from "../../../../config/db.mjs"
 import { DataTypes } from "sequelize"
-import Reward from "../reward/Reward.mjs"
 import Restaurant from "../restaurant/Restaurant.mjs"
+import Reward from "../reward/Reward.mjs"
 import User from "../user/User.mjs"
-import Location from "../location/Location.mjs"
 
 const Order = sequelize.define(
   "Order",
   {
-    status: {
-      type: DataTypes.ENUM("pending", "preparing", "delivered", "cancelled"),
+    userId: {
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
-    payment_method: {
+    restaurantId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    deliveryAddress: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: {
+          msg: "Delivery address is required",
+        },
+      },
+    },
+
+    paymentMethod: {
       type: DataTypes.ENUM("card", "cash"),
       allowNull: false,
     },
-    points_used: {
+    pointsUsed: {
       type: DataTypes.INTEGER,
       allowNull: true,
       defaultValue: 0,
@@ -24,41 +37,38 @@ const Order = sequelize.define(
         min: 0,
       },
     },
+
+    rewardApplied: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+
+    totalAmount: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: false,
+    },
+
+    status: {
+      type: DataTypes.ENUM("pending", "preparing", "delivered", "cancelled"),
+      allowNull: false,
+    },
   },
   {
-    createdAt: "created_at",
     updatedAt: false,
+    underscored: true,
   }
 )
 
-Order.belongsTo(Location, {
-  foreignKey: {
-    name: "delivery_address",
-    allowNull: false,
-  },
-})
-
 Order.belongsTo(User, {
-  foreignKey: {
-    name: "user_id",
-    allowNull: false,
-  },
   onDelete: "CASCADE",
 })
-
 Order.belongsTo(Restaurant, {
-  foreignKey: {
-    name: "restaurant_id",
-    allowNull: false,
-  },
   onDelete: "CASCADE",
 })
 
 Order.belongsTo(Reward, {
-  foreignKey: {
-    name: "reward_applied",
-    allowNull: true,
-  },
+  foreignKey: "rewardApplied",
+  onDelete: "SET NULL",
 })
 
 export default Order

@@ -1,10 +1,11 @@
 [
   {
+    "id": 1,
     "name": "Borscht",
-    "restaurant_id": 1,
+    "restaurantId": 1,
     "description": "Traditional beet soup with sour cream.",
     "price": 95.0,
-    "img_url": "https://example.com/dishes/borscht.jpg",
+    "imageUrl": "https://example.com/dishes/borscht.jpg",
     "kcal": 150,
     "weight": 350,
     "proteins": 5,
@@ -12,14 +13,15 @@
     "fats": 7,
     "rating": 4.7,
     "category": "Soup",
-    "available": true
+    "isAvailable": true
   },
   {
+    "id": 2,
     "name": "Varenyky",
-    "restaurant_id": 1,
+    "restaurantId": 1,
     "description": "Dumplings with potatoes and onions.",
     "price": 80.0,
-    "img_url": "https://example.com/dishes/varenyky.jpg",
+    "imageUrl": "https://example.com/dishes/varenyky.jpg",
     "kcal": 300,
     "weight": 200,
     "proteins": 6,
@@ -27,14 +29,15 @@
     "fats": 8,
     "rating": 4.6,
     "category": "Main Course",
-    "available": true
+    "isAvailable": true
   },
   {
+    "id": 3,
     "name": "Margherita Pizza",
-    "restaurant_id": 2,
+    "restaurantId": 2,
     "description": "Classic pizza with tomato sauce and mozzarella.",
     "price": 130.0,
-    "img_url": "https://example.com/dishes/margherita.jpg",
+    "imageUrl": "https://example.com/dishes/margherita.jpg",
     "kcal": 500,
     "weight": 450,
     "proteins": 18,
@@ -42,14 +45,15 @@
     "fats": 20,
     "rating": 4.8,
     "category": "Pizza",
-    "available": true
+    "isAvailable": true
   },
   {
+    "id": 4,
     "name": "California Roll",
-    "restaurant_id": 3,
+    "restaurantId": 3,
     "description": "Crab meat, avocado, cucumber, rice.",
     "price": 150.0,
-    "img_url": "https://example.com/dishes/california.jpg",
+    "imageUrl": "https://example.com/dishes/california.jpg",
     "kcal": 320,
     "weight": 250,
     "proteins": 14,
@@ -57,14 +61,15 @@
     "fats": 10,
     "rating": 4.5,
     "category": "Sushi",
-    "available": true
+    "isAvailable": true
   },
   {
+    "id": 5,
     "name": "Salmon Nigiri",
-    "restaurant_id": 3,
+    "restaurantId": 3,
     "description": "Fresh salmon on rice.",
     "price": 110.0,
-    "img_url": "https://example.com/dishes/nigiri.jpg",
+    "imageUrl": "https://example.com/dishes/nigiri.jpg",
     "kcal": 180,
     "weight": 100,
     "proteins": 12,
@@ -72,6 +77,6 @@
     "fats": 5,
     "rating": 4.9,
     "category": "Sushi",
-    "available": true
+    "isAvailable": true
   }
 ]

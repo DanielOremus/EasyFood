@@ -3,7 +3,7 @@ import { configDotenv } from "dotenv"
 configDotenv()
 
 const config = Object.freeze({
-  APP_ENV: process.env.APP_ENV || "production",
+  appEnv: process.env.APP_ENV || "production",
   port: process.env.APP_PORT,
   db: {
     user: process.env.SQL_USER,

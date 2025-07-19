@@ -6,36 +6,37 @@ import Reward from "../reward/Reward.mjs"
 const UserReward = sequelize.define(
   "UserReward",
   {
-    is_claimed: {
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    rewardId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    isClaimed: {
       type: DataTypes.BOOLEAN,
       allowNull: true,
       defaultValue: false,
     },
-    claimed_date: {
+    claimedDate: {
       type: DataTypes.DATE,
       allowNull: true,
     },
   },
   {
-    tableName: "user_rewards",
-    createdAt: false,
-    updatedAt: false,
+    timestamps: false,
+    underscored: true,
   }
 )
 
 UserReward.belongsTo(User, {
-  foreignKey: {
-    name: "user_id",
-    allowNull: false,
-  },
   onDelete: "CASCADE",
 })
+User.hasMany(UserReward)
 UserReward.belongsTo(Reward, {
-  foreignKey: {
-    name: "user_id",
-    allowNull: false,
-  },
   onDelete: "CASCADE",
 })
+Reward.hasMany(UserReward)
 
 export default UserReward

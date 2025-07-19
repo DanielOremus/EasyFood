@@ -6,6 +6,14 @@ import Order from "../order/Order.mjs"
 const OrderItem = sequelize.define(
   "OrderItem",
   {
+    orderId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    dishId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
     quantity: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -26,25 +34,21 @@ const OrderItem = sequelize.define(
     },
   },
   {
-    tableName: "order_items",
-    createdAt: false,
-    updatedAt: false,
+    timestamps: false,
+    underscored: true,
   }
 )
 
 OrderItem.belongsTo(Order, {
-  foreignKey: {
-    name: "order_id",
-    allowNull: false,
-  },
   onDelete: "CASCADE",
 })
+
+Order.hasMany(OrderItem, { foreignKey: "orderId", as: "items" })
+
 OrderItem.belongsTo(Dish, {
-  foreignKey: {
-    name: "dish_id",
-    allowNull: false,
-  },
   onDelete: "CASCADE",
 })
+
+Dish.hasMany(OrderItem, { as: "orderItems" })
 
 export default OrderItem

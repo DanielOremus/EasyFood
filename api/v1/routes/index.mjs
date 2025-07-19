@@ -1,10 +1,16 @@
 import { Router } from "express"
 import usersRoutes from "./users.mjs"
 import authRoutes from "./auth.mjs"
+import restaurantsRoutes from "./restaurants.mjs"
+import orderRoutes from "./orders.mjs"
+import dishesRoutes from "./dishes.mjs"
 
 const router = Router()
 
 router.use("/users", usersRoutes)
 router.use("/auth", authRoutes)
+router.use("/restaurants", restaurantsRoutes)
+router.use("/orders", orderRoutes)
+router.use("/dishes", dishesRoutes)
 
 export default router

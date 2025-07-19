@@ -7,11 +7,26 @@ import Restaurant from "../restaurant/Restaurant.mjs"
 const Review = sequelize.define(
   "Review",
   {
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+    restaurantId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    dishId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
     rating: {
       type: DataTypes.DECIMAL(2, 1),
       allowNull: false,
       validate: {
         min: 1,
+      },
+      get() {
+        return parseFloat(this.getDataValue("rating"))
       },
     },
     comment: {
@@ -29,32 +44,20 @@ const Review = sequelize.define(
     },
   },
   {
-    createdAt: "created_at",
     updatedAt: false,
+    underscored: true,
   }
 )
 
 Review.belongsTo(User, {
-  foreignKey: {
-    name: "user_id",
-    allowNull: true,
-  },
   onDelete: "SET NULL",
 })
 
-Review.belongsTo(Dish, {
-  foreignKey: {
-    name: "dish_id",
-    allowNull: false,
-  },
+Review.belongsTo(Restaurant, {
   onDelete: "CASCADE",
 })
 
-Review.belongsTo(Restaurant, {
-  foreignKey: {
-    name: "restaurant_id",
-    allowNull: false,
-  },
+Review.belongsTo(Dish, {
   onDelete: "CASCADE",
 })
 

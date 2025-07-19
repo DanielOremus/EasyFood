@@ -1,9 +1,14 @@
 import { DataTypes } from "sequelize"
 import { sequelize } from "../../../../config/db.mjs"
+import User from "../user/User.mjs"
 
 const Card = sequelize.define(
   "Card",
   {
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
     token: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -34,7 +39,7 @@ const Card = sequelize.define(
         },
       },
     },
-    holder_name: {
+    holderName: {
       type: DataTypes.STRING(50),
       allowNull: false,
       validate: {
@@ -47,24 +52,29 @@ const Card = sequelize.define(
         },
       },
     },
-    exp_month: {
-      type: DataTypes.STRING(2),
+    expMonth: {
+      type: DataTypes.INTEGER(2),
       allowNull: false,
     },
-    exp_year: {
-      type: DataTypes.STRING(2),
+    expYear: {
+      type: DataTypes.INTEGER(2),
       allowNull: false,
     },
-    is_default: {
+    isDefault: {
       type: DataTypes.BOOLEAN,
       allowNull: true,
       defaultValue: true,
     },
   },
   {
-    createdAt: false,
-    updatedAt: false,
+    timestamps: false,
+    underscored: true,
   }
 )
+
+Card.belongsTo(User, {
+  onDelete: "CASCADE",
+})
+User.hasMany(Card)
 
 export default Card

@@ -9,10 +9,10 @@ class UserValidator {
       },
       isLength: {
         options: {
-          min: 1,
+          min: 3,
           max: 50,
         },
-        errorMessage: "Username must be at least 1 and at most 50 chars long",
+        errorMessage: "Username must be at least 3 and at most 50 chars long",
       },
     },
     email: {
@@ -21,9 +21,17 @@ class UserValidator {
         errorMessage: "Email is required",
         bail: true,
       },
+      isLength: {
+        options: {
+          max: 255,
+        },
+        errorMessage: "Email must be at most 255 chars long",
+        bail: true,
+      },
       isEmail: {
         errorMessage: "Invalid email format",
       },
+
       normalizeEmail: true,
     },
     phone: {
@@ -32,10 +40,13 @@ class UserValidator {
         errorMessage: "Phone number is required",
         bail: true,
       },
+      isNumeric: {
+        errorMessage: "Must provide a valid phone number",
+        bail: true,
+      },
       isMobilePhone: {
-        locale: "any",
-
-        errorMessage: "Phone number is invalid",
+        options: ["uk-UA"],
+        errorMessage: "Must provide a valid UA phone number",
       },
     },
     password: {
@@ -105,10 +116,10 @@ class UserValidator {
       },
       isLength: {
         options: {
-          min: 1,
+          min: 3,
           max: 50,
         },
-        errorMessage: "Username must be at least 1 and at most 50 chars long",
+        errorMessage: "Username must be at least 3 and at most 50 chars long",
       },
     },
     phone: {
@@ -117,10 +128,13 @@ class UserValidator {
         errorMessage: "Phone number is required",
         bail: true,
       },
+      isNumeric: {
+        errorMessage: "Must provide a valid phone number",
+        bail: true,
+      },
       isMobilePhone: {
-        locale: "any",
-
-        errorMessage: "Phone number is invalid",
+        options: ["uk-UA"],
+        errorMessage: "Must provide a valid UA phone number",
       },
     },
     avatarUrl: {
@@ -138,7 +152,7 @@ class UserValidator {
       },
       isURL: {
         options: {
-          require_tld: true,
+          requireTld: true,
         },
         errorMessage: "Avatar url is invalid",
       },

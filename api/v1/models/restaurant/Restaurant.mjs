@@ -42,11 +42,11 @@ const Restaurant = sequelize.define(
         max: 180,
       },
     },
-    img_url: {
+    imageUrl: {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    open_hours: {
+    openHours: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
@@ -72,7 +72,7 @@ const Restaurant = sequelize.define(
         },
       },
     },
-    cuisine_type: {
+    cuisineType: {
       type: DataTypes.STRING(100),
       allowNull: false,
       validate: {
@@ -87,8 +87,8 @@ const Restaurant = sequelize.define(
     },
   },
   {
-    createdAt: false,
-    updatedAt: false,
+    timestamps: false,
+    underscored: true,
   }
 )
 

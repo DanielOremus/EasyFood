@@ -3,86 +3,187 @@ import CRUDManager from "../CRUDManager.mjs"
 import { sequelize } from "../../../../config/db.mjs"
 import UploadsManager from "../../../../utils/UploadsManager.mjs"
 import { v4 as uuidv4 } from "uuid"
+import CustomError from "../../../../utils/CustomError.mjs"
+import { comparePasswords } from "../../../../middlewares/password.mjs"
+import JWTHelper from "../../../../utils/JWTHelper.mjs"
+import { debugLog } from "../../../../utils/logger.mjs"
 
 class UserService extends CRUDManager {
-  async getAll(filters = {}, projection = ["id", "username", "avatar_url"]) {
-    return await super.getAll(filters, projection)
+  async register(data, headers) {
+    try {
+      const result = await sequelize.transaction(async (t) => {
+        const [user, created] = await this.model.findOrCreate({
+          where: { email: data.email },
+          defaults: data,
+          transaction: t,
+        })
+        if (!created) throw new CustomError("This email is already in use", 400)
+
+        const token = JWTHelper.prepareToken({ id: user.id }, headers)
+
+        return { user, token }
+      })
+      return result
+    } catch (error) {
+      debugLog(error)
+      throw error
+    }
   }
-  async getById(id, projection = { exclude: ["password", "email"] }) {
-    return await super.getById(id, projection)
+  async login(data, headers) {
+    try {
+      const user = await super.getOne(
+        { email: data.email },
+        ["id", "username", "email", "points", "password"],
+        null
+      )
+      if (!user) throw new CustomError("Invalid email or password", 401)
+
+      const isSame = await comparePasswords(data.password, user.password)
+      if (!isSame) throw new CustomError("Invalid email or password", 401)
+
+      const token = JWTHelper.prepareToken({ id: user.id }, headers)
+
+      return { user, token }
+    } catch (error) {
+      debugLog(error)
+
+      throw error
+    }
+  }
+  async getAll(
+    filters = {},
+    projection = ["id", "username", "avatarUrl"],
+    populateParams = null
+  ) {
+    return await super.getAll(filters, projection, populateParams)
+  }
+  async getById(
+    id,
+    projection = { exclude: ["password", "email"] },
+    populateParams = null,
+    options = {}
+  ) {
+    const user = await super.getById(id, projection, populateParams, options)
+    if (!user) throw new CustomError("User not found", 404)
+    return user
   }
   async update(id, data) {
-    const t = await sequelize.transaction()
-    let currentAvatarUrl
     let fileName
     try {
-      //Аватар: файл, або переданий url
-      //Якщо переданий аватар в тілі:
-      // файл - створюємо файл в потрібній директорії, присвоюємо url в data.avatar_url
-      // готовий шлях - присвоюємо в data.avatar_url
-      if (data.avatar) {
-        if (data.avatar?.buffer) {
-          fileName = `avatar_${uuidv4()}.png`
-          const relativePath = await UploadsManager.uploadToSubfolder(
-            "avatars",
-            fileName,
-            data.avatar.buffer
-          )
-          data.avatar_url = relativePath
-        } else {
-          data.avatar_url = data.avatar
+      const result = await sequelize.transaction(async (t) => {
+        const exists = await this.getById(id, ["avatarUrl"], null, {
+          transaction: t,
+        })
+
+        const currentAvatarUrl = exists.avatarUrl
+        if (data.avatar) {
+          if (data.avatar?.buffer) {
+            fileName = `avatar_${uuidv4()}.png`
+            const relativePath = await UploadsManager.uploadToSubfolder(
+              "avatars",
+              fileName,
+              data.avatar.buffer
+            )
+            data.avatarUrl = relativePath
+          } else {
+            data.avatarUrl = data.avatar
+          }
         }
-      }
 
-      const user = await this.model.findByPk(id, {
-        where: { id },
-        attributes: ["avatar_url"],
-        transaction: t,
-      })
+        //Робимо зміни в бд
+        const affected = await super.update(exists.id, data, {
+          individualHooks: true,
+          transaction: t,
+        })
 
-      if (!user) return null
+        //Якщо шлях до аватару певного рядка не співпадає: спробуємо видалити старий аватар
+        if (
+          affected &&
+          currentAvatarUrl &&
+          data.avatarUrl &&
+          currentAvatarUrl !== data.avatarUrl
+        )
+          await UploadsManager.deleteAbsolute(currentAvatarUrl)
 
-      currentAvatarUrl = user.avatar_url
-
-      //Робимо зміни в бд
-      const affected = await this.model.update(data, {
-        where: {
+        const user = await super.getById(
           id,
-        },
-        individualHooks: true,
-        transaction: t,
+          { exclude: ["email", "password"] },
+          null,
+          { transaction: t }
+        )
+
+        return user
       })
 
-      await t.commit()
-      //Якщо шлях до аватару певного рядка не співпадає: спробуємо видалити старий аватар
-      if (
-        affected &&
-        currentAvatarUrl &&
-        data.avatar_url &&
-        currentAvatarUrl !== data.avatar_url
-      ) {
-        await UploadsManager.deleteAbsolute(currentAvatarUrl)
-      }
-
-      return true
+      return result
     } catch (error) {
-      console.log(error)
-
-      //Якщо щосб пішло не так: спробуємо видалити раніше створений аватар
-
-      await t.rollback()
-
+      //Якщо щось пішло не так: видаляємо раніше створений аватар
       if (fileName) {
         await UploadsManager.deleteFromSubfolder("avatars", fileName).catch(
           (e) => {
-            console.log("Failed to delete new avatar: " + e.message)
+            console.log("Failed to delete uploaded avatar: " + e.message)
           }
         )
       }
 
-      throw new Error("Error while updating user by id: " + error)
+      debugLog(error)
+
+      throw error
+    }
+  }
+  async updatePassword(id, data) {
+    try {
+      const result = await sequelize.transaction(async (t) => {
+        const user = await super.getById(id, ["password"], null, {
+          transaction: t,
+        })
+        if (!user) throw new CustomError("User not found", 404)
+        const isValid = await comparePasswords(data.password, user.password)
+        if (!isValid) throw new CustomError("Incorrect password", 400)
+        const isSame = await comparePasswords(data.newPassword, user.password)
+        if (isSame)
+          throw new CustomError(
+            "Current password is the same as the new one",
+            400
+          )
+        await super.update(
+          id,
+          { password: data.newPassword },
+          {
+            individualHooks: true,
+            transaction: t,
+          }
+        )
+
+        return true
+      })
+      return result
+    } catch (error) {
+      debugLog(error)
+
+      throw error
     }
   }
 }
+
+// {
+//    "restaurantId": 1,
+//    "items": [
+//     {
+//         "dishId": 1,
+//         "quantity": 2
+//     },
+//     {
+//         "dishId": 2,
+//         "quantity": 2
+//     }
+//    ],
+//    "deliveryAddress": "Оноківська",
+//    "paymentMethod": "card",
+//    "usePoints": "10",
+//    "rewardCode": "SUSHI30",
+//    "cardId": "111"
+
+// }
 
 export default new UserService(User)
