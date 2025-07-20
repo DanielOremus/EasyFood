@@ -12,7 +12,7 @@ UploadsManager.initUploadFolder()
 
 await db.connect()
 createAssociations()
-// await syncTables()
+// await initTables()
 // SeedUploader.uploadAll()
 
 initApp(app)

@@ -1,4 +1,6 @@
+import { validationResult } from "express-validator"
 import DishService from "../models/dish/DishService.mjs"
+import ReviewService from "../models/review/ReviewService.mjs"
 
 class DishController {
   static async getDishesList(req, res) {

@@ -7,7 +7,6 @@ class OrderValidator {
       custom: {
         options: (v) => {
           const validator = new CustomIdValidator("Restaurant ID")
-          validator.errorCodes
           validator.validate(v)
           return true
         },
@@ -131,6 +130,22 @@ class OrderValidator {
           max: 50,
         },
         errorMessage: "Reward code can be at most 50 chars long",
+      },
+    },
+  }
+  static statusSchema = {
+    status: {
+      notEmpty: {
+        errorMessage: "Status is required",
+        bail: true,
+      },
+      custom: {
+        options: (v) => {
+          const statuses = Object.values(order.statuses)
+          if (!statuses.includes(v))
+            throw new Error(`Order status '${v}' is not supported`)
+          return true
+        },
       },
     },
   }

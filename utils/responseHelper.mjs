@@ -17,3 +17,15 @@ export const formatOrderCreateResponse = (order, dishBindingObj) => {
     status: order.status,
   }
 }
+
+export const formatReviewsResponse = (reviews) => {
+  return reviews.map((review) => ({
+    user: {
+      username: review.User?.username || null,
+      avatarUrl: review.User?.avatarUrl || null,
+    },
+    rating: review.rating,
+    comment: review.comment,
+    createdAt: review.createdAt,
+  }))
+}

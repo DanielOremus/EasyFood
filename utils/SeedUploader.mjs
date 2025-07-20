@@ -5,6 +5,7 @@ import User from "../api/v1/models/user/User.mjs"
 import Restaurant from "../api/v1/models/restaurant/Restaurant.mjs"
 import Reward from "../api/v1/models/reward/Reward.mjs"
 import Dish from "../api/v1/models/dish/Dish.mjs"
+import Review from "../api/v1/models/review/Review.mjs"
 class SeedUploader {
   static __filename = fileURLToPath(import.meta.url)
   static __dirname = path.dirname(SeedUploader.__filename)
@@ -43,12 +44,19 @@ class SeedUploader {
     await this.uploadTable(Dish, "dishes.json")
     console.log("Dishes seed was uploaded successfully")
   }
+  static async uploadReviews() {
+    await this.uploadTable(Review, "reviews.json")
+    console.log("Reviews seed was uploaded successfully")
+  }
 
   static async uploadAll() {
-    await this.uploadUsers()
-    await this.uploadRests()
-    await this.uploadRewards()
+    await Promise.all([
+      this.uploadUsers(),
+      this.uploadRests(),
+      this.uploadRewards(),
+    ])
     await this.uploadDishes()
+    await this.uploadReviews()
   }
 }
 

@@ -12,4 +12,11 @@ router.post(
   OrderController.createOrder
 )
 
+router.put(
+  "/:id/status",
+  ensureAuthenticated,
+  checkSchema(OrderValidator.statusSchema),
+  OrderController.updateOrderStatus
+)
+
 export default router

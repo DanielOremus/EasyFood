@@ -53,6 +53,32 @@ class OrderController {
       res.status(error.code || 500).json({ success: false, msg: error.message })
     }
   }
+  static async updateOrderStatus(req, res) {
+    const errors = validationResult(req)
+    if (!errors.isEmpty())
+      return res.status(400).json({ success: false, msg: errors.array() })
+
+    const { status } = req.body
+    const orderId = req.params.id
+    try {
+      const { deltaPoints } = await OrderService.updateStatus({
+        orderId,
+        status,
+      })
+
+      res.json({
+        success: true,
+        msg: "Order status successfully changed",
+        data: {
+          orderId,
+          status,
+          pointsEarned: deltaPoints,
+        },
+      })
+    } catch (error) {
+      res.status(error.code || 500).json({ success: false, msg: error.message })
+    }
+  }
 }
 
 export default OrderController

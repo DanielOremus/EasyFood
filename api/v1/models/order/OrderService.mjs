@@ -16,17 +16,17 @@ class OrderService extends CRUDManager {
     [orderConfig.statuses.PENDING]: () => true,
     [orderConfig.statuses.PREPARING]: () => true,
     [orderConfig.statuses.DELIVERED]: async (order, t) => {
+      const deltaPoints = order.totalAmount * orderConfig.pointRate
       await User.update(
         {
-          points: sequelize.literal(
-            `points + ${order.totalAmount * orderConfig.pointRate}`
-          ),
+          points: sequelize.literal(`points + ${deltaPoints}`),
         },
         {
           where: { id: order.userId },
           transaction: t,
         }
       )
+      return { deltaPoints }
     },
     [orderConfig.statuses.CANCELLED]: async (order, t) => {},
   }
@@ -171,7 +171,7 @@ class OrderService extends CRUDManager {
   async updateStatus(data) {
     const t = await sequelize.transaction()
     try {
-      let order = await super.getById(
+      const order = await super.getById(
         data.orderId,
         ["id", "userId", "rewardApplied", "pointsUsed", "totalAmount"],
         null,
@@ -182,15 +182,15 @@ class OrderService extends CRUDManager {
       if (!OrderService.statusActions[data.status])
         throw new CustomError(`Order status ${data.status} is not supported`)
 
-      await OrderService.statusActions[data.status](order, t)
-      order = await super.update(
-        order.id,
-        { status: data.status },
-        { transaction: t }
+      const { deltaPoints } = await OrderService.statusActions[data.status](
+        order,
+        t
       )
+      await super.update(order.id, { status: data.status }, { transaction: t })
+
       await t.commit()
 
-      return
+      return { deltaPoints }
     } catch (error) {
       await t.rollback()
       debugLog(error)

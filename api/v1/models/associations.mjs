@@ -109,14 +109,14 @@ export default function () {
   Restaurant.hasMany(Review, {
     foreignKey: {
       name: "restaurantId",
-      allowNull: true,
+      allowNull: false,
     },
     onDelete: "CASCADE",
   })
   Review.belongsTo(Restaurant, {
     foreignKey: {
       name: "restaurantId",
-      allowNull: true,
+      allowNull: false,
     },
     onDelete: "CASCADE",
   })
