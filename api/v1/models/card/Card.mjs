@@ -1,14 +1,9 @@
 import { DataTypes } from "sequelize"
 import { sequelize } from "../../../../config/db.mjs"
-import User from "../user/User.mjs"
 
 const Card = sequelize.define(
   "Card",
   {
-    userId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
     token: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -71,10 +66,5 @@ const Card = sequelize.define(
     underscored: true,
   }
 )
-
-Card.belongsTo(User, {
-  onDelete: "CASCADE",
-})
-User.hasMany(Card)
 
 export default Card

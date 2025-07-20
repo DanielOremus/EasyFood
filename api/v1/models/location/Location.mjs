@@ -1,14 +1,9 @@
 import { sequelize } from "../../../../config/db.mjs"
 import { DataTypes } from "sequelize"
-import User from "../user/User.mjs"
 
 const Location = sequelize.define(
   "Location",
   {
-    userId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
     address: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -44,9 +39,5 @@ const Location = sequelize.define(
     underscored: true,
   }
 )
-
-Location.belongsTo(User, {
-  onDelete: "CASCADE",
-})
 
 export default Location

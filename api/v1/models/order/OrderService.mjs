@@ -5,12 +5,31 @@ import RewardService from "../reward/RewardService.mjs"
 import UserService from "../user/UserService.mjs"
 import OrderItem from "../order_item/OrderItem.mjs"
 import { default as orderConfig } from "../../../../config/order.mjs"
-
 import { sequelize } from "../../../../config/db.mjs"
 import User from "../user/User.mjs"
 import OrderBusinessValidator from "../../../../validators/OrderBusinessValidator.mjs"
 import { debugLog } from "../../../../utils/logger.mjs"
+import CustomError from "../../../../utils/CustomError.mjs"
+
 class OrderService extends CRUDManager {
+  static statusActions = {
+    [orderConfig.statuses.PENDING]: () => true,
+    [orderConfig.statuses.PREPARING]: () => true,
+    [orderConfig.statuses.DELIVERED]: async (order, t) => {
+      await User.update(
+        {
+          points: sequelize.literal(
+            `points + ${order.totalAmount * orderConfig.pointRate}`
+          ),
+        },
+        {
+          where: { id: order.userId },
+          transaction: t,
+        }
+      )
+    },
+    [orderConfig.statuses.CANCELLED]: async (order, t) => {},
+  }
   async getAllByUserId(id) {
     try {
       await UserService.getById(id)
@@ -46,7 +65,6 @@ class OrderService extends CRUDManager {
       }
     }
     let pointsUsed = 0
-    //TODO: add logic for points
     if (data.usePoints > 0) {
       const maxUsePoints = Math.ceil(
         (totalPrice * orderConfig.maxPointSalePercentage) /
@@ -65,6 +83,8 @@ class OrderService extends CRUDManager {
       const result = await sequelize.transaction(async (t) => {
         const { user, existDishes } =
           await OrderBusinessValidator.validateOrderData(data, t)
+
+        console.log(user)
 
         const userReward = user.UserReward?.[0]
         const reward = userReward?.Reward
@@ -112,7 +132,7 @@ class OrderService extends CRUDManager {
         )
         if (pointsUsed > 0) {
           await User.update(
-            { points: user.points - pointsUsed },
+            { points: sequelize.literal(`points-${pointsUsed}`) },
             {
               where: {
                 id: user.id,
@@ -141,6 +161,36 @@ class OrderService extends CRUDManager {
       })
       return result
     } catch (error) {
+      debugLog(error)
+      throw error
+    }
+  }
+
+  async updateStatus(data) {
+    const t = await sequelize.transaction()
+    try {
+      let order = await super.getById(
+        data.orderId,
+        ["id", "userId", "rewardApplied", "pointsUsed", "totalAmount"],
+        null,
+        { transaction: t }
+      )
+      if (!order) throw new CustomError("Order not found", 404)
+
+      if (!OrderService.statusActions[data.status])
+        throw new CustomError(`Order status ${data.status} is not supported`)
+
+      await OrderService.statusActions[data.status](order, t)
+      order = await super.update(
+        order.id,
+        { status: data.status },
+        { transaction: t }
+      )
+      await t.commit()
+
+      return
+    } catch (error) {
+      await t.rollback()
       debugLog(error)
       throw error
     }

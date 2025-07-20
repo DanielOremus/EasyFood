@@ -1,20 +1,9 @@
 import { sequelize } from "../../../../config/db.mjs"
 import { DataTypes } from "sequelize"
-import Restaurant from "../restaurant/Restaurant.mjs"
-import Reward from "../reward/Reward.mjs"
-import User from "../user/User.mjs"
 
 const Order = sequelize.define(
   "Order",
   {
-    userId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    restaurantId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
     deliveryAddress: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -58,17 +47,5 @@ const Order = sequelize.define(
     underscored: true,
   }
 )
-
-Order.belongsTo(User, {
-  onDelete: "CASCADE",
-})
-Order.belongsTo(Restaurant, {
-  onDelete: "CASCADE",
-})
-
-Order.belongsTo(Reward, {
-  foreignKey: "rewardApplied",
-  onDelete: "SET NULL",
-})
 
 export default Order

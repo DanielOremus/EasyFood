@@ -6,10 +6,8 @@ class DishController {
     //TODO: move logic to service
     const { restaurantId } = req.params
     try {
-      const restaurant = await RestaurantService.getById(restaurantId)
-      if (!restaurant)
-        return res.json({ success: false, msg: "Restaurant not found" })
-      const dishes = await DishService.getAll({ restaurantId: restaurantId })
+      await RestaurantService.getById(restaurantId)
+      const dishes = await DishService.getAll({ restaurant_id: restaurantId })
       res.json({ success: true, data: { dishes } })
     } catch (error) {
       res.status(500).json({ success: false, msg: error.message })

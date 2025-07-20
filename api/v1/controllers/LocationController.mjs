@@ -21,7 +21,7 @@ class LocationController {
     const id = req.params.id
     try {
       const location = await LocationService.create({
-        userId: id,
+        user_id: id,
         address,
         lat,
         lng,

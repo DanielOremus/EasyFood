@@ -1,15 +1,9 @@
 import { sequelize } from "../../../../config/db.mjs"
 import { DataTypes } from "sequelize"
-import Restaurant from "../restaurant/Restaurant.mjs"
-// import OrderItem from "../order_item/OrderItem.mjs"
 
 const Dish = sequelize.define(
   "Dish",
   {
-    restaurantId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
     name: {
       type: DataTypes.STRING(50),
       allowNull: false,
@@ -111,13 +105,5 @@ const Dish = sequelize.define(
     underscored: true,
   }
 )
-
-Dish.belongsTo(Restaurant, {
-  onDelete: "CASCADE",
-  foreignKey: {
-    name: "restaurantId",
-  },
-})
-Restaurant.hasMany(Dish, { foreignKey: "restaurantId" })
 
 export default Dish

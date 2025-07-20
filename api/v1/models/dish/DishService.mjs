@@ -5,7 +5,7 @@ import CustomError from "../../../../utils/CustomError.mjs"
 class DishService extends CRUDManager {
   async getAll(
     filters = {},
-    projection = { exclude: ["restaurant_id"] },
+    projection = { exclude: ["restaurantId"] },
     populateParams = null,
     options = {}
   ) {

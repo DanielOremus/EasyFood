@@ -1,6 +1,6 @@
 [
   {
-    "id": "reward-001",
+    "id": "1",
     "title": "30% off Sushi",
     "description": "Отримай знижку 30% на всі суші-страви.",
     "discount": 0.3,
@@ -11,7 +11,7 @@
     "expireDate": "2025-07-31T23:59:59Z"
   },
   {
-    "id": "reward-002",
+    "id": "2",
     "title": "50 грн Off",
     "description": "Отримай фіксовану знижку 50 грн на замовлення.",
     "discount": 50.0,
@@ -22,7 +22,7 @@
     "expireDate": "2025-07-31T23:59:59Z"
   },
   {
-    "id": "reward-003",
+    "id": "3",
     "title": "Free Drink",
     "description": "Отримай безкоштовний напій при замовленні понад 200 грн.",
     "discount": 1.0,
@@ -33,7 +33,7 @@
     "expireDate": "2025-08-05T23:59:59Z"
   },
   {
-    "id": "reward-004",
+    "id": "4",
     "title": "10% Healthy Bonus",
     "description": "10% знижка на всі страви у Green Bowl.",
     "discount": 0.1,
@@ -44,7 +44,7 @@
     "expireDate": "2025-08-10T23:59:59Z"
   },
   {
-    "id": "reward-005",
+    "id": "5",
     "title": "Free Dessert",
     "description": "Безкоштовний десерт при замовленні понад 300 грн.",
     "discount": 1.0,

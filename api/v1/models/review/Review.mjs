@@ -1,24 +1,9 @@
 import { DataTypes } from "sequelize"
 import { sequelize } from "../../../../config/db.mjs"
-import User from "../user/User.mjs"
-import Dish from "../dish/Dish.mjs"
-import Restaurant from "../restaurant/Restaurant.mjs"
 
 const Review = sequelize.define(
   "Review",
   {
-    userId: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-    },
-    restaurantId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    dishId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
     rating: {
       type: DataTypes.DECIMAL(2, 1),
       allowNull: false,
@@ -48,17 +33,5 @@ const Review = sequelize.define(
     underscored: true,
   }
 )
-
-Review.belongsTo(User, {
-  onDelete: "SET NULL",
-})
-
-Review.belongsTo(Restaurant, {
-  onDelete: "CASCADE",
-})
-
-Review.belongsTo(Dish, {
-  onDelete: "CASCADE",
-})
 
 export default Review

@@ -1,14 +1,9 @@
 import { DataTypes } from "sequelize"
 import { sequelize } from "../../../../config/db.mjs"
-import Dish from "../dish/Dish.mjs"
 
-const RecommendedSide = sequelize.define(
-  "RecommendedSide",
+const Side = sequelize.define(
+  "Side",
   {
-    dishId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
     name: {
       type: DataTypes.STRING(50),
       allowNull: false,
@@ -33,8 +28,4 @@ const RecommendedSide = sequelize.define(
   { timestamps: false, underscored: true }
 )
 
-RecommendedSide.belongsTo(Dish, {
-  onDelete: "CASCADE",
-})
-
-export default RecommendedSide
+export default Side

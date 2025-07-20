@@ -7,7 +7,7 @@
     "password": "anna123",
     "avatarUrl": "https://example.com/avatars/anna.png",
     "points": 120,
-    "createdAt": "2025-07-01T10:30:00Z"
+    "created_at": "2025-07-01T10:30:00Z"
   },
   {
     "id": "user-002",
@@ -17,7 +17,7 @@
     "password": "max456",
     "avatarUrl": "https://example.com/avatars/max.png",
     "points": 80,
-    "createdAt": "2025-06-25T15:10:00Z"
+    "created_at": "2025-06-25T15:10:00Z"
   },
   {
     "id": "user-003",
@@ -27,7 +27,7 @@
     "password": "olya789",
     "avatarUrl": "https://example.com/avatars/olya.png",
     "points": 45,
-    "createdAt": "2025-07-10T11:00:00Z"
+    "created_at": "2025-07-10T11:00:00Z"
   },
   {
     "id": "user-004",
@@ -37,7 +37,7 @@
     "password": "roman101",
     "avatarUrl": "https://example.com/avatars/roman.png",
     "points": 200,
-    "createdAt": "2025-06-15T09:20:00Z"
+    "created_at": "2025-06-15T09:20:00Z"
   },
   {
     "id": "user-005",
@@ -47,6 +47,6 @@
     "password": "irina202",
     "avatarUrl": "https://example.com/avatars/irina.png",
     "points": 15,
-    "createdAt": "2025-07-05T14:45:00Z"
+    "created_at": "2025-07-05T14:45:00Z"
   }
 ]
