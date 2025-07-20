@@ -10,6 +10,8 @@ import upload from "../../../middlewares/multer.mjs"
 import LocationValidator from "../../../validators/LocationValidator.mjs"
 import LocationController from "../controllers/LocationController.mjs"
 import OrderController from "../controllers/OrderController.mjs"
+import CardValidator from "../../../validators/CardValidator.mjs"
+import CardController from "../controllers/CardController.mjs"
 
 const router = Router()
 
@@ -34,6 +36,13 @@ router.post(
   ownerChecker("params", "id"),
   checkSchema(LocationValidator.defaultSchema),
   LocationController.addUserLocation
+)
+
+router.post(
+  "/:id/cards",
+  ownerChecker("params", "id"),
+  checkSchema(CardValidator.defaultSchema),
+  CardController.createCard
 )
 
 router.put(

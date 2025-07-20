@@ -4,20 +4,16 @@ import { sequelize } from "../../../../config/db.mjs"
 const Card = sequelize.define(
   "Card",
   {
-    token: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
     brand: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(50),
       allowNull: false,
       validate: {
         notEmpty: {
           msg: "Brand is required",
         },
         len: {
-          args: [1, 255],
-          msg: "Brand must contain 1-255 chars",
+          args: [1, 50],
+          msg: "Brand must contain 1-50 chars",
         },
       },
     },
@@ -58,7 +54,7 @@ const Card = sequelize.define(
     isDefault: {
       type: DataTypes.BOOLEAN,
       allowNull: true,
-      defaultValue: true,
+      defaultValue: false,
     },
   },
   {

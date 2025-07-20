@@ -70,6 +70,18 @@ class CRUDManager {
       throw new Error("Error while updating item by id: " + error)
     }
   }
+
+  async updateOne(filters, data, options = {}) {
+    try {
+      const [affectedRows] = await this.model.update(data, {
+        where: filters,
+        ...options,
+      })
+      return affectedRows
+    } catch (error) {
+      throw new Error("Error while updating item: " + error)
+    }
+  }
   async delete(id, options = {}) {
     try {
       const [affectedRows] = await this.model.destroy({
