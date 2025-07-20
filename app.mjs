@@ -6,12 +6,13 @@ import db from "./config/db.mjs"
 import SeedUploader from "./utils/SeedUploader.mjs"
 import UploadsManager from "./utils/UploadsManager.mjs"
 import { initTables, syncTables } from "./utils/syncTables.mjs"
+import { default as createAssociations } from "./api/v1/models/associations.mjs"
 const app = express()
 UploadsManager.initUploadFolder()
 
 await db.connect()
-// await initTables()
-
+createAssociations()
+// await syncTables()
 // SeedUploader.uploadAll()
 
 initApp(app)

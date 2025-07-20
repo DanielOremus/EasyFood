@@ -73,6 +73,37 @@ export default function () {
     onDelete: "SET NULL",
   })
 
+  User.hasMany(UserReward, {
+    foreignKey: {
+      name: "userId",
+      allowNull: false,
+    },
+    onDelete: "CASCADE",
+  })
+
+  UserReward.belongsTo(User, {
+    foreignKey: {
+      name: "userId",
+      allowNull: false,
+    },
+    onDelete: "CASCADE",
+  })
+
+  Reward.hasMany(UserReward, {
+    foreignKey: {
+      name: "rewardId",
+      allowNull: false,
+    },
+    onDelete: "CASCADE",
+  })
+  UserReward.belongsTo(Reward, {
+    foreignKey: {
+      name: "rewardId",
+      allowNull: false,
+    },
+    onDelete: "CASCADE",
+  })
+
   //Restaurant
 
   Restaurant.hasMany(Review, {
@@ -144,30 +175,14 @@ export default function () {
     onDelete: "CASCADE",
   })
 
-  Review.belongsTo(Restaurant, {
+  Review.belongsTo(Dish, {
     foreignKey: {
       name: "dishId",
       allowNull: false,
     },
     onDelete: "CASCADE",
   })
-  //Reward
-  Reward.belongsToMany(User, {
-    through: UserReward,
-    foreignKey: {
-      name: "rewardId",
-      allowNull: false,
-    },
-    onDelete: "CASCADE",
-  })
-  User.belongsToMany(Reward, {
-    through: UserReward,
-    foreignKey: {
-      name: "userId",
-      allowNull: false,
-    },
-    onDelete: "CASCADE",
-  })
+
   //Order
 
   Order.hasMany(OrderItem, {
@@ -181,21 +196,13 @@ export default function () {
     onDelete: "CASCADE",
   })
 
-  Dish.belongsToMany(Order, {
-    through: OrderItem,
-    foreignKey: {
-      name: "dishId",
-      allowNull: false,
-    },
+  Dish.hasMany(OrderItem, {
+    foreignKey: { name: "dishId", allowNull: false },
     onDelete: "CASCADE",
   })
-  Order.belongsToMany(Dish, {
-    through: OrderItem,
 
-    foreignKey: {
-      name: "orderId",
-      allowNull: false,
-    },
+  OrderItem.belongsTo(Dish, {
+    foreignKey: { name: "dishId", allowNull: false },
     onDelete: "CASCADE",
   })
 

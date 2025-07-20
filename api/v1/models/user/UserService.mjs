@@ -91,7 +91,7 @@ class UserService extends CRUDManager {
         }
 
         //Робимо зміни в бд
-        const affected = await super.update(exists.id, data, {
+        const affected = await super.update(id, data, {
           individualHooks: true,
           transaction: t,
         })

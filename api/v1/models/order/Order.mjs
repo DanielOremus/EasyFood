@@ -28,7 +28,7 @@ const Order = sequelize.define(
     },
 
     rewardApplied: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING(50),
       allowNull: true,
     },
 

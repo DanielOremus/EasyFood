@@ -1,15 +1,12 @@
 import { sequelize } from "../config/db.mjs"
-import associations from "../api/v1/models/associations.mjs"
 
 export async function initTables() {
   //USE ONLY ONCE!!!
   try {
     await sequelize.query("SET FOREIGN_KEY_CHECKS = 0")
-    associations()
     await sequelize.sync({ force: true })
     await sequelize.query("SET FOREIGN_KEY_CHECKS = 1")
     console.log("Successfully initialized all tables")
-    console.warn("NOW DISABLE IT!!!")
   } catch (error) {
     console.log("Failed to initialize tables")
     console.log(error)
@@ -19,7 +16,6 @@ export async function initTables() {
 
 export async function syncTables() {
   try {
-    associations()
     await sequelize.sync({ alter: true })
     console.log("Successfully synced all tables")
   } catch (error) {

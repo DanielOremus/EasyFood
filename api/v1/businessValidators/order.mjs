@@ -1,12 +1,13 @@
-import UserReward from "../api/v1/models/user_reward/UserReward.mjs"
-import RewardService from "../api/v1/models/reward/RewardService.mjs"
-import Card from "../api/v1/models/card/Card.mjs"
-import UserService from "../api/v1/models/user/UserService.mjs"
-import RestaurantService from "../api/v1/models/restaurant/RestaurantService.mjs"
-import CustomError from "../utils/CustomError.mjs"
-import Dish from "../api/v1/models/dish/Dish.mjs"
+import UserReward from "../models/user_reward/UserReward.mjs"
+import RewardService from "../models/reward/RewardService.mjs"
+import Card from "../models/card/Card.mjs"
+import UserService from "../models/user/UserService.mjs"
+import RestaurantService from "../models/restaurant/RestaurantService.mjs"
+import CustomError from "../../../utils/CustomError.mjs"
+import Dish from "../models/dish/Dish.mjs"
 import { Op } from "sequelize"
-import { debugLog } from "../utils/logger.mjs"
+import { debugLog } from "../../../utils/logger.mjs"
+import Reward from "../models/reward/Reward.mjs"
 
 class OrderBusinessValidator {
   static populateTypesFuncs = {
@@ -17,7 +18,7 @@ class OrderBusinessValidator {
         populateParams.push({
           model: UserReward,
           include: {
-            model: RewardService.model,
+            model: Reward,
             where: { code: rewardCode },
             required: false,
           },
@@ -46,6 +47,8 @@ class OrderBusinessValidator {
 
   static async validateOrderData(orderData, transaction = null) {
     try {
+      console.log(orderData)
+
       const userPopulateParams = OrderBusinessValidator.buildPopulateParams(
         "create",
         orderData
@@ -106,7 +109,7 @@ class OrderBusinessValidator {
       throw new CustomError("Insufficient points", 400)
 
     if (orderData.rewardCode) {
-      const userReward = user.UserReward?.[0]
+      const userReward = user.UserRewards?.[0]
       const reward = userReward?.Reward
       if (!reward)
         throw new CustomError(

@@ -1,15 +1,15 @@
 import Order from "./Order.mjs"
 import CRUDManager from "../CRUDManager.mjs"
 import UserReward from "../user_reward/UserReward.mjs"
-import RewardService from "../reward/RewardService.mjs"
 import UserService from "../user/UserService.mjs"
 import OrderItem from "../order_item/OrderItem.mjs"
 import { default as orderConfig } from "../../../../config/order.mjs"
 import { sequelize } from "../../../../config/db.mjs"
 import User from "../user/User.mjs"
-import OrderBusinessValidator from "../../../../validators/OrderBusinessValidator.mjs"
+import { default as businessValidator } from "../../businessValidators/order.mjs"
 import { debugLog } from "../../../../utils/logger.mjs"
 import CustomError from "../../../../utils/CustomError.mjs"
+import Reward from "../reward/Reward.mjs"
 
 class OrderService extends CRUDManager {
   static statusActions = {
@@ -72,21 +72,20 @@ class OrderService extends CRUDManager {
       )
       pointsUsed = Math.min(maxUsePoints, data.usePoints)
 
-      totalPrice -= Math.floor(pointsUsed * orderConfig.pointRate)
+      totalPrice -= pointsUsed * orderConfig.pointRate
     }
-    console.log(totalPrice)
 
     return { totalPrice, pointsUsed }
   }
   async create(data) {
     try {
       const result = await sequelize.transaction(async (t) => {
-        const { user, existDishes } =
-          await OrderBusinessValidator.validateOrderData(data, t)
+        const { user, existDishes } = await businessValidator.validateOrderData(
+          data,
+          t
+        )
 
-        console.log(user)
-
-        const userReward = user.UserReward?.[0]
+        const userReward = user.UserRewards?.[0]
         const reward = userReward?.Reward
 
         const dishBindingObj = existDishes.reduce(
@@ -146,8 +145,11 @@ class OrderService extends CRUDManager {
           await UserReward.update(
             { isClaimed: true, claimedDate: new Date() },
             {
+              where: {
+                userId: user.id,
+              },
               include: {
-                model: RewardService.model,
+                model: Reward,
                 where: {
                   code: reward.code,
                 },

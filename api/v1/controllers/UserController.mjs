@@ -40,7 +40,7 @@ class UserController {
         success: true,
         msg: "User created",
         data: {
-          user_id: user.id,
+          userId: user.id,
           token,
         },
       })

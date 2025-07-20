@@ -11,9 +11,7 @@ class OrderController {
 
       res.json({
         success: true,
-        data: {
-          orders,
-        },
+        data: orders,
       })
     } catch (error) {
       res.status(error.code || 500).json({ success: false, msg: error.message })
@@ -50,7 +48,7 @@ class OrderController {
 
       const resOrder = formatOrderCreateResponse(order, dishBindingObj)
 
-      return res.status(201).json({ success: true, data: { order: resOrder } })
+      return res.status(201).json({ success: true, data: resOrder })
     } catch (error) {
       res.status(error.code || 500).json({ success: false, msg: error.message })
     }

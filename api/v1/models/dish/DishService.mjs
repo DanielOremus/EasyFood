@@ -1,7 +1,8 @@
 import Dish from "./Dish.mjs"
 import CRUDManager from "../CRUDManager.mjs"
 import CustomError from "../../../../utils/CustomError.mjs"
-
+import { debugLog } from "../../../../utils/logger.mjs"
+import RestaurantService from "../restaurant/RestaurantService.mjs"
 class DishService extends CRUDManager {
   async getAll(
     filters = {},
@@ -9,7 +10,21 @@ class DishService extends CRUDManager {
     populateParams = null,
     options = {}
   ) {
-    return await super.getAll(filters, projection, populateParams, options)
+    try {
+      return await super.getAll(filters, projection, populateParams, options)
+    } catch (error) {
+      debugLog(error)
+      throw error
+    }
+  }
+  async getAllByRestId(restId, projection = { exclude: ["restaurantId"] }) {
+    try {
+      await RestaurantService.getById(restId)
+      return await super.getAll({ restaurantId: restId }, projection)
+    } catch (error) {
+      debugLog(error)
+      throw error
+    }
   }
   async getById(
     id,

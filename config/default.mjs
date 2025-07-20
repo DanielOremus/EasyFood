@@ -1,6 +1,6 @@
 import { configDotenv } from "dotenv"
 
-configDotenv()
+configDotenv({ quiet: true })
 
 const config = Object.freeze({
   appEnv: process.env.APP_ENV || "production",

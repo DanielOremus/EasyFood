@@ -7,7 +7,7 @@ class LocationController {
     const id = req.params.id
     try {
       const locations = await LocationService.getAllByUserId(id)
-      return res.json({ success: true, data: { locations } })
+      return res.json({ success: true, data: locations })
     } catch (error) {
       res.status(error.code || 500).json({ success: false, msg: error.message })
     }
