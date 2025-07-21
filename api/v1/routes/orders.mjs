@@ -12,6 +12,8 @@ router.post(
   OrderController.createOrder
 )
 
+router.get("/:id", ensureAuthenticated, OrderController.getOrderById)
+
 router.put(
   "/:id/status",
   ensureAuthenticated,

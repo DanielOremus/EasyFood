@@ -8,7 +8,7 @@ class LocationService extends CRUDManager {
   async getAllByUserId(userId) {
     try {
       await UserService.getById(userId)
-      return await super.getAll({ userId: id }, { exclude: ["userId"] })
+      return await super.getAll({ userId: userId }, { exclude: ["userId"] })
     } catch (error) {
       debugLog(error)
       throw error

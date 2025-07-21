@@ -1,10 +1,22 @@
 import CustomError from "../../../../utils/CustomError.mjs"
 import { debugLog } from "../../../../utils/logger.mjs"
 import CRUDManager from "../CRUDManager.mjs"
+import Dish from "../dish/Dish.mjs"
 import Restaurant from "./Restaurant.mjs"
 
 class RestaurantService extends CRUDManager {
-  async getById(id, projection = null, populateParams = null, options = {}) {
+  async getById(
+    id,
+    projection = null,
+    populateParams = {
+      model: Dish,
+      as: "dishes",
+      attributes: {
+        exclude: ["restaurantId"],
+      },
+    },
+    options = {}
+  ) {
     try {
       const restaurant = await super.getById(
         id,

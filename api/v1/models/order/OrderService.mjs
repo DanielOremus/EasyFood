@@ -34,7 +34,37 @@ class OrderService extends CRUDManager {
     try {
       await UserService.getById(id)
 
-      return await super.getAll({ userId: id })
+      return await super.getAll(
+        { userId: id },
+        { exclude: ["userId"] },
+        {
+          model: OrderItem,
+          as: "items",
+        }
+      )
+    } catch (error) {
+      debugLog(error)
+      throw error
+    }
+  }
+
+  async getById(
+    id,
+    projection = null,
+    populateParams = {
+      model: OrderItem,
+      as: "items",
+      attributes: {
+        exclude: ["orderId"],
+      },
+    },
+    options = {}
+  ) {
+    try {
+      const order = await super.getById(id, projection, populateParams, options)
+      if (!order) throw new CustomError("Order not found", 404)
+
+      return order
     } catch (error) {
       debugLog(error)
       throw error

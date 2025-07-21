@@ -47,12 +47,12 @@ class OrderBusinessValidator {
 
   static async validateOrderData(orderData, transaction = null) {
     try {
-      console.log(orderData)
-
       const userPopulateParams = OrderBusinessValidator.buildPopulateParams(
         "create",
         orderData
       )
+
+      console.log(orderData.restaurantId)
 
       const dishIds = orderData.items.map(({ dishId }) => dishId)
 
@@ -65,6 +65,7 @@ class OrderBusinessValidator {
           null,
           {
             model: Dish,
+            as: "dishes",
             where: { id: { [Op.in]: dishIds } },
             attributes: ["id", "name", "price"],
             required: false,
@@ -75,7 +76,7 @@ class OrderBusinessValidator {
         ),
       ])
 
-      const existDishes = restaurant.Dishes
+      const existDishes = restaurant.dishes
       OrderBusinessValidator.validateOrderItems(dishIds, existDishes)
       OrderBusinessValidator.validateSaleData(orderData, user)
       OrderBusinessValidator.validateCard(orderData, user)

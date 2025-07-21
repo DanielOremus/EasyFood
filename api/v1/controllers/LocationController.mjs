@@ -21,7 +21,7 @@ class LocationController {
     const id = req.params.id
     try {
       const location = await LocationService.create({
-        user_id: id,
+        userId: id,
         address,
         lat,
         lng,
@@ -31,7 +31,7 @@ class LocationController {
         success: true,
         msg: "Location added",
         data: {
-          location_id: location.id,
+          locationId: location.id,
         },
       })
     } catch (error) {

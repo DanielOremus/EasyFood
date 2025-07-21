@@ -2,6 +2,9 @@ import { validationResult } from "express-validator"
 import CardService from "../models/card/CardService.mjs"
 
 class CardController {
+  static async getCardsByUserId(req, res) {
+    //TODO: finish controller method
+  }
   static async createCard(req, res) {
     const errors = validationResult(req)
     if (!errors.isEmpty())

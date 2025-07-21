@@ -1,4 +1,3 @@
-import { or } from "sequelize"
 import OrderService from "../models/order/OrderService.mjs"
 import { validationResult } from "express-validator"
 import { formatOrderCreateResponse } from "../../../utils/responseHelper.mjs"
@@ -7,12 +6,22 @@ class OrderController {
   static async getUserOrders(req, res) {
     const userId = req.params.userId
     try {
-      const orders = await OrderService.getByAllUserId(userId)
+      const orders = await OrderService.getAllByUserId(userId)
 
       res.json({
         success: true,
         data: orders,
       })
+    } catch (error) {
+      res.status(error.code || 500).json({ success: false, msg: error.message })
+    }
+  }
+  static async getOrderById(req, res) {
+    const id = req.params.id
+    try {
+      const order = await OrderService.getById(id)
+
+      res.json({ success: true, data: order })
     } catch (error) {
       res.status(error.code || 500).json({ success: false, msg: error.message })
     }
@@ -79,6 +88,7 @@ class OrderController {
       res.status(error.code || 500).json({ success: false, msg: error.message })
     }
   }
+  static async
 }
 
 export default OrderController

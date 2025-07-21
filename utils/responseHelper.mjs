@@ -5,16 +5,11 @@ export const formatOrderCreateResponse = (order, dishBindingObj) => {
     quantity,
     price,
   }))
+
+  const resOrder = order.toJSON()
   return {
-    restaurantId: order.restaurantId,
+    ...resOrder,
     items: resItems,
-    createdAt: order.createdAt,
-    deliveryAddress: order.deliveryAddress,
-    paymentMethod: order.paymentMethod,
-    totalAmount: order.totalAmount,
-    pointsUsed: order.pointsUsed,
-    rewardApplied: order.rewardApplied,
-    status: order.status,
   }
 }
 
