@@ -94,6 +94,7 @@ export default function () {
       name: "rewardId",
       allowNull: false,
     },
+    as: "reward",
     onDelete: "CASCADE",
   })
   UserReward.belongsTo(Reward, {
@@ -101,6 +102,7 @@ export default function () {
       name: "rewardId",
       allowNull: false,
     },
+    as: "reward",
     onDelete: "CASCADE",
   })
 

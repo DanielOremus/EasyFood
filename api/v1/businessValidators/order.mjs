@@ -1,5 +1,4 @@
 import UserReward from "../models/user_reward/UserReward.mjs"
-import RewardService from "../models/reward/RewardService.mjs"
 import Card from "../models/card/Card.mjs"
 import UserService from "../models/user/UserService.mjs"
 import RestaurantService from "../models/restaurant/RestaurantService.mjs"
@@ -17,8 +16,10 @@ class OrderBusinessValidator {
       if (rewardCode) {
         populateParams.push({
           model: UserReward,
+
           include: {
             model: Reward,
+            as: "reward",
             where: { code: rewardCode },
             required: false,
           },
@@ -110,8 +111,8 @@ class OrderBusinessValidator {
       throw new CustomError("Insufficient points", 400)
 
     if (orderData.rewardCode) {
-      const userReward = user.UserRewards?.[0]
-      const reward = userReward?.Reward
+      const userReward = user.UserRewards[0]
+      const reward = userReward?.reward
       if (!reward)
         throw new CustomError(
           `User does not own reward with code ${orderData.rewardCode}`,
@@ -133,13 +134,12 @@ class OrderBusinessValidator {
   }
 
   static validateCard(orderData, user) {
-    const { paymentMethod, cardId } = orderData
-    if (paymentMethod === "card") {
-      const userCard = user.Cards?.[0]
-      if (cardId != userCard?.id) {
-        throw new CustomError("User does not own this card", 400)
-      }
-    }
+    const { paymentMethod } = orderData
+    if (paymentMethod !== "card") return true
+
+    if (user.Cards.length === 0)
+      throw new CustomError("User does not own this card", 400)
+
     return true
   }
 }

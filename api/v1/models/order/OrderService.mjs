@@ -115,8 +115,7 @@ class OrderService extends CRUDManager {
           t
         )
 
-        const userReward = user.UserRewards?.[0]
-        const reward = userReward?.Reward
+        const reward = user.UserRewards?.[0]?.reward
 
         const dishBindingObj = existDishes.reduce(
           (acc, { id, name, price }) => {

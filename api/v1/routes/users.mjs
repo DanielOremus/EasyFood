@@ -12,6 +12,8 @@ import LocationController from "../controllers/LocationController.mjs"
 import OrderController from "../controllers/OrderController.mjs"
 import CardValidator from "../../../validators/CardValidator.mjs"
 import CardController from "../controllers/CardController.mjs"
+import RewardController from "../controllers/RewardController.mjs"
+import RewardValidator from "../../../validators/RewardValidator.mjs"
 
 const router = Router()
 
@@ -31,6 +33,12 @@ router.get(
 
 router.get("/:id", ownerChecker("params", "id"), UserController.getUserById)
 
+router.get(
+  "/:id/rewards",
+  ownerChecker("params", "id"),
+  RewardController.getRewardsByUserId
+)
+
 router.post(
   "/:id/locations",
   ownerChecker("params", "id"),
@@ -43,6 +51,13 @@ router.post(
   ownerChecker("params", "id"),
   checkSchema(CardValidator.defaultSchema),
   CardController.createCard
+)
+
+router.post(
+  "/:id/rewards",
+  ensureAuthenticated,
+  checkSchema(RewardValidator.addForUserSchema),
+  RewardController.addRewardForUser
 )
 
 router.put(

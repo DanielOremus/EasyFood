@@ -63,9 +63,14 @@ class UserService extends CRUDManager {
     populateParams = null,
     options = {}
   ) {
-    const user = await super.getById(id, projection, populateParams, options)
-    if (!user) throw new CustomError("User not found", 404)
-    return user
+    try {
+      const user = await super.getById(id, projection, populateParams, options)
+      if (!user) throw new CustomError("User not found", 404)
+      return user
+    } catch (error) {
+      debugLog(error)
+      throw error
+    }
   }
   async update(id, data) {
     let fileName

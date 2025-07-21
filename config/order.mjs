@@ -8,5 +8,4 @@ export default Object.freeze({
     DELIVERED: "delivered",
     CANCELLED: "cancelled",
   },
-  rewardTypes: ["percentage", "fixed", "free_item"],
 })
