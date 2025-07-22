@@ -29,6 +29,76 @@ class DishController {
       res.status(error.code || 500).json({ success: false, msg: error.message })
     }
   }
+  static async createOrUpdateDish(req, res) {
+    const errors = validationResult(req)
+    if (!errors.isEmpty())
+      return res.status(400).json({ success: false, msg: errors.array() })
+
+    const id = req.params.id
+
+    const {
+      restaurantId,
+      name,
+      description,
+      price,
+      imageUrl,
+      kcal,
+      weight,
+      proteins,
+      carbs,
+      fats,
+      rating,
+      category,
+      isAvailable,
+    } = req.body
+
+    let image
+
+    if (req.file) {
+      image = req.file
+    }
+    try {
+      const data = {
+        restaurantId,
+        name,
+        description,
+        price,
+        imageUrl,
+        image,
+        kcal,
+        weight,
+        proteins,
+        carbs,
+        fats,
+        rating,
+        category,
+        isAvailable,
+      }
+      let dish
+      let statusCode
+      if (id) {
+        dish = await DishService.update(id, data)
+        statusCode = 200
+      } else {
+        dish = await DishService.create(data)
+        statusCode = 201
+      }
+
+      res.status(statusCode).json({ success: true, data: dish })
+    } catch (error) {
+      res.status(error.code || 500).json({ success: false, msg: error.message })
+    }
+  }
+  static async deleteDish(req, res) {
+    const id = req.params.id
+    try {
+      await DishService.delete(id)
+
+      res.json({ success: true, msg: "Dish was successfully deleted" })
+    } catch (error) {
+      res.status(error.code || 500).json({ success: false, msg: error.message })
+    }
+  }
 }
 
 export default DishController

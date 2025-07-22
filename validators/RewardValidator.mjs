@@ -18,6 +18,7 @@ class RewardValidator {
     },
     description: {
       trim: true,
+      escape: true,
       notEmpty: {
         errorMessage: "Description is required",
         bail: true,

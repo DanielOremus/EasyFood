@@ -19,16 +19,7 @@ const Dish = sequelize.define(
     },
     description: {
       type: DataTypes.STRING(500),
-      allowNull: false,
-      validate: {
-        notEmpty: {
-          msg: "Description is required",
-        },
-        len: {
-          args: [1, 500],
-          msg: "Description must be between 1-500 chars",
-        },
-      },
+      allowNull: true,
     },
     price: {
       type: DataTypes.DECIMAL(10, 2),

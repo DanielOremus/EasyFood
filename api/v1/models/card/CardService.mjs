@@ -6,7 +6,6 @@ import Card from "./Card.mjs"
 
 class CardService extends CRUDManager {
   async create(data) {
-    //TODO: add exist validation
     try {
       const result = await sequelize.transaction(async (t) => {
         await UserService.getById(data.userId, ["id"], null, {

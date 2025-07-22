@@ -1,7 +1,5 @@
 import LocationService from "../models/location/LocationService.mjs"
-import UserService from "../models/user/UserService.mjs"
 import { validationResult } from "express-validator"
-//TODO: move logic to service
 class LocationController {
   static async getUserLocations(req, res) {
     const id = req.params.id

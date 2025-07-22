@@ -50,12 +50,12 @@ class SeedUploader {
   }
 
   static async uploadAll() {
-    await Promise.all([
-      this.uploadUsers(),
-      this.uploadRests(),
-      this.uploadRewards(),
-    ])
-    await this.uploadDishes()
+    // await Promise.all([
+    //   this.uploadUsers(),
+    //   this.uploadRests(),
+    //   this.uploadRewards(),
+    // ])
+    // await this.uploadDishes()
     await this.uploadReviews()
   }
 }

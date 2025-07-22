@@ -139,6 +139,7 @@ class UserValidator {
     },
     avatarUrl: {
       optional: true,
+      trim: true,
       notEmpty: {
         errorMessage: "Avatar url is required",
         bail: true,

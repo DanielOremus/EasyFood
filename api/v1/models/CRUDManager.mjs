@@ -84,10 +84,13 @@ class CRUDManager {
   }
   async delete(id, options = {}) {
     try {
-      const [affectedRows] = await this.model.destroy({
-        where: { id },
+      const affectedRows = await this.model.destroy({
+        where: {
+          id: id,
+        },
         ...options,
       })
+
       return affectedRows
     } catch (error) {
       throw new Error("Error while deleting item by id: " + error)

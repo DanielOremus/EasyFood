@@ -201,13 +201,13 @@ export default function () {
   })
 
   Dish.hasMany(OrderItem, {
-    foreignKey: { name: "dishId", allowNull: false },
-    onDelete: "CASCADE",
+    foreignKey: { name: "dishId", allowNull: true },
+    onDelete: "SET NULL",
   })
 
   OrderItem.belongsTo(Dish, {
-    foreignKey: { name: "dishId", allowNull: false },
-    onDelete: "CASCADE",
+    foreignKey: { name: "dishId", allowNull: true },
+    onDelete: "SET NULL",
   })
 
   console.log("Successfully made associations")
