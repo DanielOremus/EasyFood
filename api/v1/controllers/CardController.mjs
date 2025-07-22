@@ -3,7 +3,14 @@ import CardService from "../models/card/CardService.mjs"
 
 class CardController {
   static async getCardsByUserId(req, res) {
-    //TODO: finish controller method
+    const userId = req.params.id
+    try {
+      const cards = await CardService.getAllByUserId(userId)
+
+      res.json({ success: true, data: cards })
+    } catch (error) {
+      return res.status(400).json({ success: false, msg: error.message })
+    }
   }
   static async createCard(req, res) {
     const errors = validationResult(req)

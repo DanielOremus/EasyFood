@@ -32,6 +32,7 @@ export default function () {
       name: "userId",
       allowNull: false,
     },
+    as: "cards",
     onDelete: "CASCADE",
   })
   Card.belongsTo(User, {
@@ -39,6 +40,7 @@ export default function () {
       name: "userId",
       allowNull: false,
     },
+    as: "cards",
     onDelete: "CASCADE",
   })
 

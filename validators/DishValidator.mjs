@@ -57,6 +57,7 @@ class DishValidator {
       trim: true,
       notEmpty: {
         errorMessage: "Price is required",
+        bail: true,
       },
       isFloat: {
         options: {

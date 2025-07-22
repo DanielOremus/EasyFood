@@ -3,7 +3,7 @@ import { validationResult } from "express-validator"
 import { formatOrderCreateResponse } from "../../../utils/responseHelper.mjs"
 
 class OrderController {
-  static async getUserOrders(req, res) {
+  static async getOrdersByUserId(req, res) {
     const userId = req.params.userId
     try {
       const orders = await OrderService.getAllByUserId(userId)

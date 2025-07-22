@@ -33,7 +33,7 @@ class OrderService extends CRUDManager {
   async getAllByUserId(id) {
     try {
       await UserService.getById(id)
-
+      //todo: add query support
       return await super.getAll(
         { userId: id },
         { exclude: ["userId"] },

@@ -28,7 +28,7 @@ router.get(
 router.get(
   "/:userId/orders",
   ownerChecker("params", "userId"),
-  OrderController.getUserOrders
+  OrderController.getOrdersByUserId
 )
 
 router.get("/:id", ownerChecker("params", "id"), UserController.getUserById)
@@ -37,6 +37,12 @@ router.get(
   "/:id/rewards",
   ownerChecker("params", "id"),
   RewardController.getRewardsByUserId
+)
+
+router.get(
+  "/:id/cards",
+  ownerChecker("params", "id"),
+  CardController.getCardsByUserId
 )
 
 router.post(

@@ -6,7 +6,11 @@ class CardValidator {
         errorMessage: "Card number is required",
         bail: true,
       },
-      isCreditCard: {
+      // isCreditCard: {
+      //   errorMessage: "Card number is invalid",
+      // },
+      matches: {
+        options: new RegExp(/^[0-9]{13,19}$/),
         errorMessage: "Card number is invalid",
       },
     },
@@ -77,6 +81,7 @@ class CardValidator {
       isBoolean: {
         errorMessage: "Must be boolean",
       },
+      toBoolean: true,
     },
   }
 }

@@ -57,6 +57,8 @@ class SeedUploader {
     // ])
     // await this.uploadDishes()
     await this.uploadReviews()
+
+    //TODO: fix reviews upload
   }
 }
 

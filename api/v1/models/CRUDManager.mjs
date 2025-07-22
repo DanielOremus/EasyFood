@@ -1,3 +1,5 @@
+import SelectionHelper from "../../../utils/selectionHelpers/SelectionHelper.mjs"
+
 class CRUDManager {
   constructor(model) {
     this.model = model
@@ -20,6 +22,7 @@ class CRUDManager {
       return []
     }
   }
+
   async getById(id, projection = null, populateParams = null, options = {}) {
     try {
       return await this.model.findByPk(id, {

@@ -5,6 +5,24 @@ import UserService from "../user/UserService.mjs"
 import Card from "./Card.mjs"
 
 class CardService extends CRUDManager {
+  async getAllByUserId(userId) {
+    try {
+      const user = await UserService.getById(userId, ["id"], {
+        model: Card,
+        as: "cards",
+        attributes: {
+          exclude: ["userId"],
+        },
+      })
+
+      console.log(user)
+
+      return user.cards
+    } catch (error) {
+      debugLog(error)
+      throw error
+    }
+  }
   async create(data) {
     try {
       const result = await sequelize.transaction(async (t) => {
@@ -23,6 +41,7 @@ class CardService extends CRUDManager {
             }
           )
         }
+        console.log(data)
 
         const card = await super.create(
           {
