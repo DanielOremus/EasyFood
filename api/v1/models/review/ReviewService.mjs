@@ -26,20 +26,31 @@ class ReviewService extends CRUDManager {
   async create(data) {
     try {
       const result = await sequelize.transaction(async (t) => {
-        const [restaurant, dish] = await Promise.all([
-          RestaurantService.getById(data.restaurantId, null, null, {
+        const restaurant = await RestaurantService.getById(
+          data.restaurantId,
+          null,
+          {
+            model: DishService.model,
+            as: "dishes",
+            where: {
+              id: data.dishId,
+            },
+            required: false,
+          },
+          {
             transaction: t,
-          }),
-          DishService.getOne(
-            { id: data.dishId, restaurantId: data.restaurantId },
-            null,
-            null,
-            { transaction: t }
-          ),
-        ])
+          }
+        )
+        //   DishService.getOne(
+        //     { id: data.dishId, restaurantId: data.restaurantId },
+        //     null,
+        //     null,
+        //     { transaction: t }
+        //   ),
+        // ])
 
         if (!restaurant) throw new CustomError("Restaurant not found", 404)
-        if (!dish) throw new CustomError("Dish not found")
+        if (!restaurant.dishes.length) throw new CustomError("Dish not found")
 
         return await super.create(data, { transaction: t })
       })

@@ -2,7 +2,7 @@ import { DataTypes } from "sequelize"
 import { sequelize } from "../../../../config/db.mjs"
 
 const Side = sequelize.define(
-  "Side",
+  "side",
   {
     name: {
       type: DataTypes.STRING(50),

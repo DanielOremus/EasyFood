@@ -5,6 +5,7 @@ import UserService from "../user/UserService.mjs"
 import OrderItem from "../order_item/OrderItem.mjs"
 import { default as orderConfig } from "../../../../config/order.mjs"
 import { sequelize } from "../../../../config/db.mjs"
+import { Op } from "sequelize"
 import User from "../user/User.mjs"
 import { default as businessValidator } from "../../businessValidators/order.mjs"
 import { debugLog } from "../../../../utils/logger.mjs"
@@ -26,6 +27,43 @@ class OrderService extends CRUDManager {
           transaction: t,
         }
       )
+
+      const user = await User.findByPk(order.userId, {
+        transaction: t,
+        attributes: ["points"],
+        include: {
+          model: UserReward,
+          attributes: ["rewardId"],
+        },
+      })
+
+      const userRewardsIds = user.userRewards.map(({ rewardId }) => rewardId)
+
+      const availableRewards = await Reward.findAll({
+        where: {
+          id: {
+            [Op.notIn]: userRewardsIds,
+          },
+          pointsRequired: {
+            [Op.lte]: user.points,
+          },
+        },
+        transaction: t,
+      })
+
+      if (availableRewards.length) {
+        await UserReward.bulkCreate(
+          availableRewards.map((reward) => ({
+            userId: user.id,
+            rewardId: reward.id,
+            isClaimed: false,
+          })),
+          {
+            transaction: t,
+          }
+        )
+      }
+
       return { deltaPoints }
     },
     [orderConfig.statuses.CANCELLED]: async (order, t) => {},
@@ -40,6 +78,9 @@ class OrderService extends CRUDManager {
         {
           model: OrderItem,
           as: "items",
+        },
+        {
+          order: [["createdAt", "DESC"]],
         }
       )
     } catch (error) {
@@ -115,7 +156,7 @@ class OrderService extends CRUDManager {
           t
         )
 
-        const reward = user.UserRewards?.[0]?.reward
+        const reward = user.userRewards?.[0]?.reward
 
         const dishBindingObj = existDishes.reduce(
           (acc, { id, name, price }) => {

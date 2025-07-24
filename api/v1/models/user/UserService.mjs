@@ -7,8 +7,11 @@ import CustomError from "../../../../utils/CustomError.mjs"
 import { comparePasswords } from "../../../../middlewares/password.mjs"
 import JWTHelper from "../../../../utils/JWTHelper.mjs"
 import { debugLog } from "../../../../utils/logger.mjs"
+import RewardService from "../reward/RewardService.mjs"
+import UserReward from "../user_reward/UserReward.mjs"
 
 class UserService extends CRUDManager {
+  //TODO: додати поле з isAdmin, щоб могти редагувати / видаляти страви, ресторани, нагороди, категорії та саб категорії
   async register(data, headers) {
     try {
       const result = await sequelize.transaction(async (t) => {
@@ -18,6 +21,30 @@ class UserService extends CRUDManager {
           transaction: t,
         })
         if (!created) throw new CustomError("This email is already in use", 400)
+
+        const availableRewards = await RewardService.getAll(
+          {
+            pointsRequired: 0,
+          },
+          null,
+          null,
+          {
+            transaction: t,
+          }
+        )
+
+        if (availableRewards.length) {
+          await UserReward.bulkCreate(
+            availableRewards.map((reward) => ({
+              userId: user.id,
+              rewardId: reward.id,
+              isClaimed: false,
+            })),
+            {
+              transaction: t,
+            }
+          )
+        }
 
         const token = JWTHelper.prepareToken({ id: user.id }, headers)
 

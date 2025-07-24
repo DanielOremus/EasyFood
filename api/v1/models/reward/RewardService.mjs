@@ -65,7 +65,7 @@ class RewardService extends CRUDManager {
           this.getById(data.rewardId, null, null, { transaction: t }),
         ])
 
-        if (user.UserRewards.length > 0)
+        if (user.userRewards.length > 0)
           throw new CustomError("User already has this reward", 409)
 
         const userReward = await UserReward.create(

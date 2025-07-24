@@ -2,7 +2,7 @@ import { DataTypes } from "sequelize"
 import { sequelize } from "../../../../config/db.mjs"
 
 const Review = sequelize.define(
-  "Review",
+  "review",
   {
     rating: {
       type: DataTypes.DECIMAL(2, 1),

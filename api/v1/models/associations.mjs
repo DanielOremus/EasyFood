@@ -9,6 +9,8 @@ import Order from "./order/Order.mjs"
 import OrderItem from "./order_item/OrderItem.mjs"
 import Side from "./side/Side.mjs"
 import Reward from "./reward/Reward.mjs"
+import Category from "./category/Category.mjs"
+import Subcategory from "./subcategory/Subcategory.mjs"
 
 export default function () {
   //User
@@ -108,6 +110,33 @@ export default function () {
     onDelete: "CASCADE",
   })
 
+  Category.hasMany(Reward, {
+    foreignKey: {
+      name: "applyCategoryId",
+      allowNull: true,
+    },
+  })
+
+  Reward.belongsTo(Category, {
+    foreignKey: {
+      name: "applyCategoryId",
+      allowNull: true,
+    },
+  })
+
+  Subcategory.hasMany(Reward, {
+    foreignKey: {
+      name: "applySubcategoryId",
+      allowNull: true,
+    },
+  })
+
+  Reward.belongsTo(Subcategory, {
+    foreignKey: {
+      name: "applySubcategoryId",
+      allowNull: true,
+    },
+  })
   //Restaurant
 
   Restaurant.hasMany(Review, {
@@ -158,11 +187,13 @@ export default function () {
     onDelete: "CASCADE",
   })
   //Dish
+
   Dish.hasMany(Side, {
     foreignKey: {
       name: "dishId",
       allowNull: false,
     },
+
     onDelete: "CASCADE",
   })
   Side.belongsTo(Dish, {
@@ -170,6 +201,7 @@ export default function () {
       name: "dishId",
       allowNull: false,
     },
+
     onDelete: "CASCADE",
   })
 
@@ -210,6 +242,35 @@ export default function () {
   OrderItem.belongsTo(Dish, {
     foreignKey: { name: "dishId", allowNull: true },
     onDelete: "SET NULL",
+  })
+
+  //Categories
+
+  Subcategory.hasMany(Dish, {
+    foreignKey: {
+      name: "subcategoryId",
+      allowNull: false,
+    },
+  })
+  Dish.belongsTo(Subcategory, {
+    foreignKey: {
+      name: "subcategoryId",
+      allowNull: false,
+    },
+  })
+
+  Category.hasMany(Subcategory, {
+    foreignKey: {
+      name: "categoryId",
+      allowNull: false,
+    },
+  })
+
+  Subcategory.belongsTo(Category, {
+    foreignKey: {
+      name: "categoryId",
+      allowNull: false,
+    },
   })
 
   console.log("Successfully made associations")

@@ -7,6 +7,9 @@ import Dish from "../models/dish/Dish.mjs"
 import { Op } from "sequelize"
 import { debugLog } from "../../../utils/logger.mjs"
 import Reward from "../models/reward/Reward.mjs"
+import Side from "../models/side/Side.mjs"
+import Category from "../models/category/Category.mjs"
+import Subcategory from "../models/subcategory/Subcategory.mjs"
 
 class OrderBusinessValidator {
   static populateTypesFuncs = {
@@ -21,6 +24,7 @@ class OrderBusinessValidator {
             model: Reward,
             as: "reward",
             where: { code: rewardCode },
+
             required: false,
           },
         })
@@ -53,9 +57,7 @@ class OrderBusinessValidator {
         orderData
       )
 
-      console.log(orderData.restaurantId)
-
-      const dishIds = orderData.items.map(({ dishId }) => dishId)
+      const dishIds = orderData.items.map((item) => item.dishId)
 
       const [user, restaurant] = await Promise.all([
         UserService.getById(orderData.userId, null, userPopulateParams, {
@@ -69,6 +71,17 @@ class OrderBusinessValidator {
             as: "dishes",
             where: { id: { [Op.in]: dishIds } },
             attributes: ["id", "name", "price"],
+            include: [
+              {
+                model: Side,
+              },
+              {
+                model: Subcategory,
+                include: {
+                  model: Category,
+                },
+              },
+            ],
             required: false,
           },
           {
@@ -78,7 +91,10 @@ class OrderBusinessValidator {
       ])
 
       const existDishes = restaurant.dishes
-      OrderBusinessValidator.validateOrderItems(dishIds, existDishes)
+
+      console.log(existDishes)
+
+      OrderBusinessValidator.validateOrderItems(orderData.items, existDishes)
       OrderBusinessValidator.validateSaleData(orderData, user)
       OrderBusinessValidator.validateCard(orderData, user)
 
@@ -89,29 +105,47 @@ class OrderBusinessValidator {
       throw error
     }
   }
-  static validateOrderItems(dishIds, existDishes) {
-    const existDishIds = existDishes.map(({ id }) => id)
+  static validateOrderItems(orderItems, existDishes) {
+    const validDishSidesMap = new Map()
 
-    const idsSet = new Set(dishIds)
-    const existIdsSet = new Set(existDishIds)
+    for (const dish of existDishes) {
+      const sideSet = new Set()
+      if (dish.sides?.length) {
+        for (const side of dish.sides) {
+          sideSet.add(`${side.id}`)
+        }
+      }
+      validDishSidesMap.set(`${dish.id}`, sideSet)
+    }
 
-    const missingIds = Array.from(idsSet.difference(existIdsSet))
+    for (const { dishId, sides } of orderItems) {
+      const stringDishId = `${dishId}`
+      if (!validDishSidesMap.has(stringDishId))
+        throw new CustomError(`Dish with id '${dishId}' does not exist`, 404)
 
-    if (dishIds.length !== existDishIds.length)
-      throw new CustomError(
-        `Some dishes not found. Missing dishes: ${missingIds.join(", ")}`,
-        404
-      )
+      const validSides = validDishSidesMap.get(stringDishId)
+
+      for (const sideId of sides ?? []) {
+        const stringSideId = `${sideId}`
+
+        if (!validSides.has(stringSideId))
+          throw new CustomError(
+            `Side with id '${sideId}' is not valid for dish '${dishId}'`,
+            409
+          )
+      }
+    }
 
     return true
   }
 
   static validateSaleData(orderData, user) {
+    //TODO: зробити валідацію щодо змоги застосування кода, тобто визначити чи є страва, до якої можна використати код. Після цього продовжити з створенням замовлення
     if (orderData.usePoints && orderData.usePoints > user.points)
       throw new CustomError("Insufficient points", 400)
 
     if (orderData.rewardCode) {
-      const userReward = user.UserRewards[0]
+      const userReward = user.userRewards[0]
       const reward = userReward?.reward
       if (!reward)
         throw new CustomError(

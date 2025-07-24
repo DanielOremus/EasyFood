@@ -2,7 +2,7 @@ import { DataTypes } from "sequelize"
 import { sequelize } from "../../../../config/db.mjs"
 
 const UserReward = sequelize.define(
-  "UserReward",
+  "userReward",
   {
     isClaimed: {
       type: DataTypes.BOOLEAN,

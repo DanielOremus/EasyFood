@@ -2,7 +2,7 @@ import { sequelize } from "../../../../config/db.mjs"
 import { DataTypes } from "sequelize"
 
 const Order = sequelize.define(
-  "Order",
+  "order",
   {
     deliveryAddress: {
       type: DataTypes.STRING,

@@ -3,7 +3,7 @@ import { sequelize } from "../../../../config/db.mjs"
 import { hashPassword } from "../../../../middlewares/password.mjs"
 
 const User = sequelize.define(
-  "User",
+  "user",
   {
     username: {
       type: DataTypes.STRING(50),
@@ -58,6 +58,11 @@ const User = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 0,
+    },
+    isAdmin: {
+      type: DataTypes.BOOLEAN,
+      allowNull: true,
+      defaultValue: false,
     },
   },
   {

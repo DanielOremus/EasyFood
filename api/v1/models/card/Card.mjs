@@ -2,7 +2,7 @@ import { DataTypes } from "sequelize"
 import { sequelize } from "../../../../config/db.mjs"
 
 const Card = sequelize.define(
-  "Card",
+  "card",
   {
     brand: {
       type: DataTypes.STRING(50),

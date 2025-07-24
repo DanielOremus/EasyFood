@@ -2,7 +2,7 @@ import { sequelize } from "../../../../config/db.mjs"
 import { DataTypes } from "sequelize"
 
 const Dish = sequelize.define(
-  "Dish",
+  "dish",
   {
     name: {
       type: DataTypes.STRING(50),
@@ -72,17 +72,6 @@ const Dish = sequelize.define(
       allowNull: false,
       validate: {
         min: 1,
-      },
-    },
-    category: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        notEmpty: "Category is required",
-        len: {
-          args: [1, 255],
-          msg: "Category must be between 1-255 chars",
-        },
       },
     },
     isAvailable: {

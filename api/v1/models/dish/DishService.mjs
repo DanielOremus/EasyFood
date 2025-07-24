@@ -6,12 +6,22 @@ import RestaurantService from "../restaurant/RestaurantService.mjs"
 import { sequelize } from "../../../../config/db.mjs"
 import { v4 as uuidv4 } from "uuid"
 import UploadsManager from "../../../../utils/UploadsManager.mjs"
+import Side from "../side/Side.mjs"
+import Subcategory from "../subcategory/Subcategory.mjs"
+import Category from "../category/Category.mjs"
 
 class DishService extends CRUDManager {
   async getAll(
     filters = {},
-    projection = { exclude: ["restaurantId"] },
-    populateParams = null,
+    projection = { exclude: ["restaurantId", "subcategoryId"] },
+    populateParams = {
+      model: Subcategory,
+      attributes: ["id", "name"],
+      include: {
+        model: Category,
+        attributes: ["id", "name"],
+      },
+    },
     options = {}
   ) {
     try {
@@ -21,10 +31,25 @@ class DishService extends CRUDManager {
       throw error
     }
   }
-  async getAllByRestId(restId, projection = { exclude: ["restaurantId"] }) {
+  async getAllByRestId(
+    restId,
+    projection = { exclude: ["restaurantId", "subcategoryId"] },
+    populateParams = {
+      model: Subcategory,
+      attributes: ["id", "name"],
+      include: {
+        model: Category,
+        attributes: ["id", "name"],
+      },
+    }
+  ) {
     try {
       await RestaurantService.getById(restId)
-      return await super.getAll({ restaurantId: restId }, projection)
+      return await super.getAll(
+        { restaurantId: restId },
+        projection,
+        populateParams
+      )
     } catch (error) {
       debugLog(error)
       throw error
@@ -32,8 +57,24 @@ class DishService extends CRUDManager {
   }
   async getById(
     id,
-    projection = { exclude: ["restaurantId"] },
-    populateParams = null,
+    projection = { exclude: ["restaurantId", "subcategoryId"] },
+    populateParams = [
+      {
+        model: Side,
+        attributes: {
+          exclude: ["dishId"],
+        },
+        as: "sides",
+      },
+      {
+        model: Subcategory,
+        attributes: ["id", "name"],
+        include: {
+          model: Category,
+          attributes: ["id", "name"],
+        },
+      },
+    ],
     options = {}
   ) {
     const dish = await super.getById(id, projection, populateParams, options)

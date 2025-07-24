@@ -1,7 +1,7 @@
 import { DataTypes } from "sequelize"
 import { sequelize } from "../../../../config/db.mjs"
 const Restaurant = sequelize.define(
-  "Restaurant",
+  "restaurant",
   {
     name: {
       type: DataTypes.STRING,

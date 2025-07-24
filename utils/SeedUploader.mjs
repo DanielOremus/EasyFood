@@ -6,6 +6,15 @@ import Restaurant from "../api/v1/models/restaurant/Restaurant.mjs"
 import Reward from "../api/v1/models/reward/Reward.mjs"
 import Dish from "../api/v1/models/dish/Dish.mjs"
 import Review from "../api/v1/models/review/Review.mjs"
+import Side from "../api/v1/models/side/Side.mjs"
+import Order from "../api/v1/models/order/Order.mjs"
+import OrderItem from "../api/v1/models/order_item/OrderItem.mjs"
+import UserReward from "../api/v1/models/user_reward/UserReward.mjs"
+import Card from "../api/v1/models/card/Card.mjs"
+import Location from "../api/v1/models/location/Location.mjs"
+import Category from "../api/v1/models/category/Category.mjs"
+import Subcategory from "../api/v1/models/subcategory/Subcategory.mjs"
+
 class SeedUploader {
   static __filename = fileURLToPath(import.meta.url)
   static __dirname = path.dirname(SeedUploader.__filename)
@@ -38,6 +47,7 @@ class SeedUploader {
   }
   static async uploadRewards() {
     await this.uploadTable(Reward, "rewards.json")
+    await this.uploadTable(UserReward, "user_rewards.json")
     console.log("Rewards seed was uploaded successfully")
   }
   static async uploadDishes() {
@@ -48,17 +58,41 @@ class SeedUploader {
     await this.uploadTable(Review, "reviews.json")
     console.log("Reviews seed was uploaded successfully")
   }
-
+  static async uploadSides() {
+    await this.uploadTable(Side, "sides.json")
+    console.log("Sides seed was uploaded successfully")
+  }
+  static async uploadOrders() {
+    await this.uploadTable(Order, "orders.json")
+    await this.uploadTable(OrderItem, "order_items.json")
+    console.log("Order seed was uploaded successfully")
+  }
+  static async uploadLocations() {
+    await this.uploadTable(Location, "locations.json")
+    console.log("Locations seed was uploaded successfully")
+  }
+  static async uploadCards() {
+    await this.uploadTable(Card, "cards.json")
+    console.log("Cards seed was uploaded successfully")
+  }
+  static async uploadCategories() {
+    await this.uploadTable(Category, "categories.json")
+    await this.uploadTable(Subcategory, "subcategories.json")
+    console.log("Cards seed was uploaded successfully")
+  }
   static async uploadAll() {
-    // await Promise.all([
-    //   this.uploadUsers(),
-    //   this.uploadRests(),
-    //   this.uploadRewards(),
-    // ])
-    // await this.uploadDishes()
-    await this.uploadReviews()
-
-    //TODO: fix reviews upload
+    await this.uploadUsers()
+    await this.uploadRests()
+    await this.uploadCategories()
+    await this.uploadDishes()
+    await Promise.all([
+      this.uploadOrders(),
+      this.uploadRewards(),
+      this.uploadLocations(),
+      this.uploadCards(),
+      this.uploadSides(),
+      this.uploadReviews(),
+    ])
   }
 }
 

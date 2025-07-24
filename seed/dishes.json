@@ -12,14 +12,14 @@
     "carbs": 20,
     "fats": 7,
     "rating": 4.7,
-    "category": "Soup",
+    "subcategoryId": "4",
     "isAvailable": true
   },
   {
     "id": 2,
-    "name": "Varenyky",
+    "name": "Cezar",
     "restaurantId": 1,
-    "description": "Dumplings with potatoes and onions.",
+    "description": "Cezar salad.",
     "price": 80.0,
     "imageUrl": "https://example.com/dishes/varenyky.jpg",
     "kcal": 300,
@@ -28,7 +28,7 @@
     "carbs": 45,
     "fats": 8,
     "rating": 4.6,
-    "category": "Main Course",
+    "subcategoryId": "3",
     "isAvailable": true
   },
   {
@@ -44,12 +44,12 @@
     "carbs": 60,
     "fats": 20,
     "rating": 4.8,
-    "category": "Pizza",
+    "subcategoryId": "1",
     "isAvailable": true
   },
   {
     "id": 4,
-    "name": "California Roll",
+    "name": "Sushi",
     "restaurantId": 3,
     "description": "Crab meat, avocado, cucumber, rice.",
     "price": 150.0,
@@ -60,12 +60,12 @@
     "carbs": 45,
     "fats": 10,
     "rating": 4.5,
-    "category": "Sushi",
+    "subcategoryId": "5",
     "isAvailable": true
   },
   {
     "id": 5,
-    "name": "Salmon Nigiri",
+    "name": "MegaBurger",
     "restaurantId": 3,
     "description": "Fresh salmon on rice.",
     "price": 110.0,
@@ -76,7 +76,7 @@
     "carbs": 20,
     "fats": 5,
     "rating": 4.9,
-    "category": "Sushi",
+    "subcategoryId": "2",
     "isAvailable": true
   }
 ]

@@ -22,24 +22,35 @@ class OrderValidator {
       },
       custom: {
         options: (v) => {
+          const dishIdErrMsg = "Items have an item with invalid Dish ID"
+          const dishIdValidator = new CustomIdValidator("ID", {
+            NOT_PROVIDED: dishIdErrMsg,
+            NOT_INT: dishIdErrMsg,
+            NEGATIVE_INT: dishIdErrMsg,
+            UNSUPPORTED_TYPE: dishIdErrMsg,
+          })
+          const sideIdErrMsg = "Items have an item with invalid Side ID"
+          const sideIdValidator = new CustomIdValidator("ID", {
+            NOT_PROVIDED: sideIdErrMsg,
+            NOT_INT: sideIdErrMsg,
+            NEGATIVE_INT: sideIdErrMsg,
+            UNSUPPORTED_TYPE: sideIdErrMsg,
+          })
           for (const item of v) {
             if (
               !Object.hasOwn(item, "dishId") ||
-              !Object.hasOwn(item, "quantity")
+              !Object.hasOwn(item, "quantity") ||
+              !Object.hasOwn(item, "sides")
             )
               throw new Error("Items have an item with invalid structure")
 
-            const { dishId, quantity } = item
-
-            const dishIdErrMsg = "Items have an item with invalid Dish ID"
-            const dishIdValidator = new CustomIdValidator("ID", {
-              NOT_PROVIDED: dishIdErrMsg,
-              NOT_INT: dishIdErrMsg,
-              NEGATIVE_INT: dishIdErrMsg,
-              UNSUPPORTED_TYPE: dishIdErrMsg,
-            })
+            const { dishId, quantity, sides } = item
 
             dishIdValidator.validate(dishId)
+            if (!Array.isArray(sides))
+              throw "Items have an item with invalid 'sides' type"
+            if (sides.length > 0)
+              sides.forEach((sideId) => sideIdValidator.validate(sideId))
 
             const sanitizedQuantity = parseInt(quantity)
             if (!Number.isInteger(sanitizedQuantity) || sanitizedQuantity <= 0)

@@ -118,17 +118,13 @@ class DishValidator {
       },
       toFloat: true,
     },
-    category: {
-      trim: true,
-      notEmpty: {
-        errorMessage: "Category is required",
-        bail: true,
-      },
-      isLength: {
-        options: {
-          max: 255,
+    categoryId: {
+      custom: {
+        options: (v) => {
+          const validator = new CustomIdValidator("Category ID")
+          validator.validate(v)
+          return true
         },
-        errorMessage: "Category must be at most 255 chars long",
       },
     },
     isAvailable: {

@@ -2,7 +2,7 @@ import { sequelize } from "../../../../config/db.mjs"
 import { DataTypes } from "sequelize"
 
 const Location = sequelize.define(
-  "Location",
+  "location",
   {
     address: {
       type: DataTypes.STRING,

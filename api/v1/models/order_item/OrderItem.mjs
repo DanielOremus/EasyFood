@@ -2,7 +2,7 @@ import { DataTypes } from "sequelize"
 import { sequelize } from "../../../../config/db.mjs"
 
 const OrderItem = sequelize.define(
-  "OrderItem",
+  "orderItem",
   {
     quantity: {
       type: DataTypes.INTEGER,

@@ -2,7 +2,7 @@ import { sequelize } from "../../../../config/db.mjs"
 import { DataTypes } from "sequelize"
 
 const Reward = sequelize.define(
-  "Reward",
+  "reward",
   {
     title: {
       type: DataTypes.STRING(50),
@@ -56,6 +56,7 @@ const Reward = sequelize.define(
       type: DataTypes.ENUM("percentage", "fixed", "free_item"),
       allowNull: false,
     },
+
     expireDate: {
       type: DataTypes.DATE,
       allowNull: true,
