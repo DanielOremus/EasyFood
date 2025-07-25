@@ -16,8 +16,8 @@ export const formatOrderCreateResponse = (order, dishBindingObj) => {
 export const formatReviewsResponse = (reviews) => {
   return reviews.map((review) => ({
     user: {
-      username: review.User?.username || null,
-      avatarUrl: review.User?.avatarUrl || null,
+      username: review.user?.username || null,
+      avatarUrl: review.user?.avatarUrl || null,
     },
     rating: review.rating,
     comment: review.comment,

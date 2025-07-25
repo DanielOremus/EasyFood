@@ -183,7 +183,6 @@ export default function () {
       name: "restaurantId",
       allowNull: false,
     },
-    as: "dishes",
     onDelete: "CASCADE",
   })
   //Dish
