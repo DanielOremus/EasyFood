@@ -3,6 +3,7 @@ import logger from "morgan"
 import path from "path"
 import { __dirname } from "../utils/path.mjs"
 import express from "express"
+import UploadsManager from "../utils/UploadsManager.mjs"
 
 // get the name of the directory
 
@@ -16,4 +17,6 @@ export const initApp = (app) => {
   app.use(cookieParser())
   app.use(express.static(path.join(__dirname, "../public")))
   app.use("/uploads", express.static(path.join(__dirname, "../uploads")))
+
+  UploadsManager.initUploadFolder()
 }

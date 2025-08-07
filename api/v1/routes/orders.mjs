@@ -1,6 +1,10 @@
 import { Router } from "express"
 import OrderController from "../controllers/OrderController.mjs"
-import { ensureAuthenticated } from "../../../middlewares/auth.mjs"
+import {
+  ensureAccOwnerOrAdmin,
+  ensureAdmin,
+  ensureAuthenticated,
+} from "../../../middlewares/auth.mjs"
 import { checkSchema } from "express-validator"
 import OrderValidator from "../../../validators/OrderValidator.mjs"
 const router = Router()
@@ -12,11 +16,15 @@ router.post(
   OrderController.createOrder
 )
 
-router.get("/:id", ensureAuthenticated, OrderController.getOrderById)
+router.get(
+  "/:id",
+  ensureAccOwnerOrAdmin("params", "id"),
+  OrderController.getOrderById
+)
 
 router.put(
   "/:id/status",
-  ensureAuthenticated,
+  ensureAdmin,
   checkSchema(OrderValidator.statusSchema),
   OrderController.updateOrderStatus
 )

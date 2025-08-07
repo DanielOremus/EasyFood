@@ -1,7 +1,7 @@
 import { Router } from "express"
 import DishController from "../controllers/DishController.mjs"
 import ReviewController from "../controllers/ReviewController.mjs"
-import { ensureAuthenticated } from "../../../middlewares/auth.mjs"
+import { ensureAdmin } from "../../../middlewares/auth.mjs"
 import { checkSchema } from "express-validator"
 import DishValidator from "../../../validators/DishValidator.mjs"
 import upload from "../../../middlewares/multer.mjs"
@@ -16,27 +16,20 @@ router.get("/:id/reviews", ReviewController.getReviewsByDishId)
 
 router.post(
   "/",
-  ensureAuthenticated,
+  ensureAdmin,
   upload.single("image"),
-  //role validator if need,
   checkSchema(DishValidator.defaultSchema),
   DishController.createOrUpdateDish
 )
 
 router.put(
   "/:id",
-  ensureAuthenticated,
+  ensureAdmin,
   upload.single("image"),
-  //role validator if need,
   checkSchema(DishValidator.defaultSchema),
   DishController.createOrUpdateDish
 )
 
-router.delete(
-  "/:id",
-  ensureAuthenticated,
-  //role validator if need,
-  DishController.deleteDish
-)
+router.delete("/:id", ensureAdmin, DishController.deleteDish)
 
 export default router

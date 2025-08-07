@@ -67,6 +67,8 @@ class OrderValidator {
           const result = v.map((item) => ({
             ...item,
             quantity: parseInt(item.quantity),
+            notes: item.notes ? item.notes.toString().trim() : null,
+            sides: Array.isArray(item.sides) ? item.sides : [],
           }))
           return result
         },

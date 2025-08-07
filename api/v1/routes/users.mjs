@@ -1,6 +1,8 @@
 import { Router } from "express"
 import UserController from "../controllers/UserController.mjs"
 import {
+  ensureAccOwnerOrAdmin,
+  ensureAdmin,
   ensureAuthenticated,
   ownerChecker,
 } from "../../../middlewares/auth.mjs"
@@ -21,21 +23,25 @@ router.get("/", ensureAuthenticated, UserController.getUsersList)
 
 router.get(
   "/:id/locations",
-  ownerChecker("params", "id"),
+  ensureAccOwnerOrAdmin("params", "id"),
   LocationController.getUserLocations
 )
 
 router.get(
   "/:userId/orders",
-  ownerChecker("params", "userId"),
+  ensureAccOwnerOrAdmin("params", "userId"),
   OrderController.getOrdersByUserId
 )
 
-router.get("/:id", ownerChecker("params", "id"), UserController.getUserById)
+router.get(
+  "/:id",
+  ensureAccOwnerOrAdmin("params", "id"),
+  UserController.getUserById
+)
 
 router.get(
   "/:id/rewards",
-  ownerChecker("params", "id"),
+  ensureAccOwnerOrAdmin("params", "id"),
   RewardController.getRewardsByUserId
 )
 
@@ -61,7 +67,7 @@ router.post(
 
 router.post(
   "/:id/rewards",
-  ensureAuthenticated,
+  ensureAdmin,
   checkSchema(RewardValidator.addForUserSchema),
   RewardController.addRewardForUser
 )

@@ -11,7 +11,6 @@ import RewardService from "../reward/RewardService.mjs"
 import UserReward from "../user_reward/UserReward.mjs"
 
 class UserService extends CRUDManager {
-  //TODO: додати поле з isAdmin, щоб могти редагувати / видаляти страви, ресторани, нагороди, категорії та саб категорії
   async register(data, headers) {
     try {
       const result = await sequelize.transaction(async (t) => {

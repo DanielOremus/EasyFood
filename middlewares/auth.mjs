@@ -1,29 +1,19 @@
 import UserService from "../api/v1/models/user/UserService.mjs"
 import JWTHelper from "../utils/JWTHelper.mjs"
 
-export const ensureAuthenticated = async (req, res, next) => {
-  try {
-    const bearer = req.headers.authorization
-    const token = JWTHelper.parseBearer(bearer, req.headers)
+async function setUserFromToken(req) {
+  const bearer = req.headers.authorization
+  const token = JWTHelper.parseBearer(bearer, req.headers)
 
-    req.user = await UserService.getById(token.id)
-
-    next()
-  } catch (error) {
-    res.status(401).json({ success: false, msg: "Token is invalid" })
-  }
+  req.user = await UserService.getById(token.id)
 }
 
-export const ownerChecker = (fieldSource, userIdFieldName) => {
+function getAuthMiddleware(func) {
   return async (req, res, next) => {
     try {
-      const bearer = req.headers.authorization
-      const token = JWTHelper.parseBearer(bearer, req.headers)
+      await setUserFromToken(req)
 
-      req.user = await UserService.getById(token.id)
-      const userId = req[fieldSource][userIdFieldName]
-
-      if (req.user.id != userId)
+      if (func && !func(req))
         return res.status(403).json({ success: false, msg: "Forbidden" })
 
       next()
@@ -32,3 +22,16 @@ export const ownerChecker = (fieldSource, userIdFieldName) => {
     }
   }
 }
+
+export const ensureAuthenticated = getAuthMiddleware()
+export const ensureAdmin = getAuthMiddleware((req) => req.user?.isAdmin)
+export const ownerChecker = (fieldSource, fieldName) =>
+  getAuthMiddleware((req) => {
+    const userId = req[fieldSource][fieldName]
+    return req.user?.id == userId
+  })
+export const ensureAccOwnerOrAdmin = (fieldSource, fieldName) =>
+  getAuthMiddleware((req) => {
+    const userId = req[fieldSource][fieldName]
+    return req.user?.isAdmin || req.user?.id == userId
+  })

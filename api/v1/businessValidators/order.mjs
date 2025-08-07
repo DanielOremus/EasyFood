@@ -19,13 +19,9 @@ class OrderBusinessValidator {
       if (rewardCode) {
         populateParams.push({
           model: UserReward,
-
           include: {
             model: Reward,
-            as: "reward",
             where: { code: rewardCode },
-
-            required: false,
           },
         })
       }
@@ -68,9 +64,8 @@ class OrderBusinessValidator {
           null,
           {
             model: Dish,
-            as: "dishes",
             where: { id: { [Op.in]: dishIds } },
-            attributes: ["id", "name", "price"],
+            attributes: ["id", "name", "price", "isAvailable"],
             include: [
               {
                 model: Side,
@@ -82,7 +77,6 @@ class OrderBusinessValidator {
                 },
               },
             ],
-            required: false,
           },
           {
             transaction,
@@ -91,8 +85,6 @@ class OrderBusinessValidator {
       ])
 
       const existDishes = restaurant.dishes
-
-      console.log(existDishes)
 
       OrderBusinessValidator.validateOrderItems(orderData.items, existDishes)
       OrderBusinessValidator.validateSaleData(orderData, user)
@@ -109,8 +101,13 @@ class OrderBusinessValidator {
     const validDishSidesMap = new Map()
 
     for (const dish of existDishes) {
+      if (!dish.isAvailable)
+        throw new CustomError(
+          `Dish with id ${dish.id} is not available now`,
+          409
+        )
       const sideSet = new Set()
-      if (dish.sides?.length) {
+      if (dish.sides.length) {
         for (const side of dish.sides) {
           sideSet.add(`${side.id}`)
         }
@@ -122,7 +119,6 @@ class OrderBusinessValidator {
       const stringDishId = `${dishId}`
       if (!validDishSidesMap.has(stringDishId))
         throw new CustomError(`Dish with id '${dishId}' does not exist`, 404)
-
       const validSides = validDishSidesMap.get(stringDishId)
 
       for (const sideId of sides ?? []) {
@@ -140,12 +136,12 @@ class OrderBusinessValidator {
   }
 
   static validateSaleData(orderData, user) {
-    //TODO: зробити валідацію щодо змоги застосування кода, тобто визначити чи є страва, до якої можна використати код. Після цього продовжити з створенням замовлення
     if (orderData.usePoints && orderData.usePoints > user.points)
       throw new CustomError("Insufficient points", 400)
 
     if (orderData.rewardCode) {
       const userReward = user.userRewards[0]
+
       const reward = userReward?.reward
       if (!reward)
         throw new CustomError(
@@ -153,15 +149,15 @@ class OrderBusinessValidator {
           400
         )
 
-      const currentDate = Date.now()
-      const expireDate = new Date(reward.expireDate)
-
-      if (expireDate < currentDate)
-        throw new CustomError("Reward has already expired", 400)
-
       if (userReward.isClaimed) {
         throw new CustomError("Reward already claimed", 400)
       }
+
+      const currentDate = Date.now()
+      const expireDate = new Date(reward.expireDate)
+
+      if (reward.expireDate && expireDate <= currentDate)
+        throw new CustomError("Reward has already expired", 400)
     }
 
     return true

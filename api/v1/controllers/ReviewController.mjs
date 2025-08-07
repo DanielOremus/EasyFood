@@ -3,7 +3,6 @@ import ReviewService from "../models/review/ReviewService.mjs"
 import { validationResult } from "express-validator"
 class ReviewController {
   static async addReview(req, res) {
-    //TODO: add validator
     const errors = validationResult(req)
     if (!errors.isEmpty())
       return res.status(400).json({ success: false, msg: errors.array() })

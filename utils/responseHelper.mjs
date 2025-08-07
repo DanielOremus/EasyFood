@@ -1,10 +1,17 @@
 export const formatOrderCreateResponse = (order, dishBindingObj) => {
-  const resItems = order.items.map(({ dishId, quantity, price }) => ({
-    dishId,
-    name: dishBindingObj[dishId].name,
-    quantity,
-    price,
-  }))
+  const resItems = order.items.map(
+    ({ dishId, sides, quantity, price, notes }) => ({
+      dishId,
+      name: dishBindingObj[dishId].name,
+      quantity,
+      price,
+      notes,
+      sides: sides.map(({ sideName, sidePrice }) => ({
+        name: sideName,
+        price: sidePrice,
+      })),
+    })
+  )
 
   const resOrder = order.toJSON()
   return {

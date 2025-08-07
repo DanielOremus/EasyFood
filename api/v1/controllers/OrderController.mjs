@@ -44,20 +44,25 @@ class OrderController {
     } = req.body
 
     try {
-      const { order, dishBindingObj } = await OrderService.create({
-        userId,
-        restaurantId,
-        items,
-        deliveryAddress,
-        paymentMethod,
-        cardId,
-        usePoints,
-        rewardCode,
-      })
+      const { order, dishBindingObj, rewardApplyMsg } =
+        await OrderService.create({
+          userId,
+          restaurantId,
+          items,
+          deliveryAddress,
+          paymentMethod,
+          cardId,
+          usePoints,
+          rewardCode,
+        })
 
       const resOrder = formatOrderCreateResponse(order, dishBindingObj)
 
-      return res.status(201).json({ success: true, data: resOrder })
+      return res.status(201).json({
+        success: true,
+        data: resOrder,
+        msg: rewardApplyMsg || undefined,
+      })
     } catch (error) {
       res.status(error.code || 500).json({ success: false, msg: error.message })
     }

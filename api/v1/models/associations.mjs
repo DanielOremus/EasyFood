@@ -11,6 +11,7 @@ import Side from "./side/Side.mjs"
 import Reward from "./reward/Reward.mjs"
 import Category from "./category/Category.mjs"
 import Subcategory from "./subcategory/Subcategory.mjs"
+import OrderItemSide from "./order_item_side/OrderItemSide.mjs"
 
 export default function () {
   //User
@@ -34,7 +35,6 @@ export default function () {
       name: "userId",
       allowNull: false,
     },
-    as: "cards",
     onDelete: "CASCADE",
   })
   Card.belongsTo(User, {
@@ -42,7 +42,6 @@ export default function () {
       name: "userId",
       allowNull: false,
     },
-    as: "cards",
     onDelete: "CASCADE",
   })
 
@@ -98,7 +97,7 @@ export default function () {
       name: "rewardId",
       allowNull: false,
     },
-    as: "reward",
+    // as: "reward",
     onDelete: "CASCADE",
   })
   UserReward.belongsTo(Reward, {
@@ -106,7 +105,7 @@ export default function () {
       name: "rewardId",
       allowNull: false,
     },
-    as: "reward",
+    // as: "reward",
     onDelete: "CASCADE",
   })
 
@@ -175,7 +174,6 @@ export default function () {
       name: "restaurantId",
       allowNull: false,
     },
-    as: "dishes",
     onDelete: "CASCADE",
   })
   Dish.belongsTo(Restaurant, {
@@ -183,7 +181,6 @@ export default function () {
       name: "restaurantId",
       allowNull: false,
     },
-    as: "dishes",
     onDelete: "CASCADE",
   })
   //Dish
@@ -241,6 +238,37 @@ export default function () {
 
   OrderItem.belongsTo(Dish, {
     foreignKey: { name: "dishId", allowNull: true },
+    onDelete: "SET NULL",
+  })
+
+  // OrderItem.belongsToMany(Side, {
+  //   through: "order_item_sides",
+  //   timestamps: false,
+  //   as: "sides",
+  // })
+  // Side.belongsToMany(OrderItem, {
+  //   through: "order_item_sides",
+  //   timestamps: false,
+  //   as: "orderItems",
+  // })
+  OrderItem.hasMany(OrderItemSide, {
+    foreignKey: { name: "orderItemId", allowNull: false },
+    onDelete: "CASCADE",
+    as: "sides",
+  })
+  OrderItemSide.belongsTo(OrderItem, {
+    foreignKey: { name: "orderItemId", allowNull: false },
+    onDelete: "CASCADE",
+    as: "sides",
+  })
+
+  Side.hasMany(OrderItemSide, {
+    foreignKey: { name: "sideId", allowNull: true },
+    onDelete: "SET NULL",
+  })
+
+  OrderItemSide.belongsTo(Side, {
+    foreignKey: { name: "sideId", allowNull: true },
     onDelete: "SET NULL",
   })
 
