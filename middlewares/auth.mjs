@@ -1,11 +1,11 @@
-import UserService from "../api/v1/models/user/UserService.mjs"
+import UserService from "../api/v1/services/UserService.mjs"
 import JWTHelper from "../utils/JWTHelper.mjs"
-
+import config from "../config/default.mjs"
 async function setUserFromToken(req) {
   const bearer = req.headers.authorization
   const token = JWTHelper.parseBearer(bearer, req.headers)
 
-  req.user = await UserService.getById(token.id)
+  req.user = await UserService.getById(token.userId)
 }
 
 function getAuthMiddleware(func) {

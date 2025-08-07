@@ -1,4 +1,4 @@
-import LocationService from "../models/location/LocationService.mjs"
+import LocationService from "../services/LocationService.mjs"
 import { validationResult } from "express-validator"
 class LocationController {
   static async getUserLocations(req, res) {

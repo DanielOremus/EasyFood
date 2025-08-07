@@ -1,6 +1,6 @@
 import { validationResult } from "express-validator"
-import DishService from "../models/dish/DishService.mjs"
-import ReviewService from "../models/review/ReviewService.mjs"
+import DishService from "../services/DishService.mjs"
+import ReviewService from "../services/ReviewService.mjs"
 
 class DishController {
   static async getDishesList(req, res) {
@@ -48,7 +48,7 @@ class DishController {
       carbs,
       fats,
       rating,
-      category,
+      subcategoryId,
       isAvailable,
     } = req.body
 
@@ -71,7 +71,7 @@ class DishController {
         carbs,
         fats,
         rating,
-        category,
+        subcategoryId,
         isAvailable,
       }
       let dish

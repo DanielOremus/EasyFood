@@ -1,4 +1,4 @@
-import CustomIdValidator from "../utils/CustomIdValidator.mjs"
+import CustomIdValidator from "./CustomIdValidator.mjs"
 
 class DishValidator {
   static nutritionValidator = (nutritionName) => ({
@@ -9,7 +9,7 @@ class DishValidator {
     },
     isInt: {
       options: {
-        gt: 0,
+        min: 0,
       },
       errorMessage: `${nutritionName} must be a positive integer`,
     },
@@ -90,9 +90,21 @@ class DishValidator {
     },
     kcal: {
       ...DishValidator.nutritionValidator("Kcal"),
+      isInt: {
+        options: {
+          gt: 0,
+        },
+        errorMessage: "Kcal must be a positive integer",
+      },
     },
     weight: {
       ...DishValidator.nutritionValidator("Weight"),
+      isInt: {
+        options: {
+          gt: 0,
+        },
+        errorMessage: "Weight must be a positive integer",
+      },
     },
     proteins: {
       ...DishValidator.nutritionValidator("Proteins"),
@@ -118,10 +130,10 @@ class DishValidator {
       },
       toFloat: true,
     },
-    categoryId: {
+    subcategoryId: {
       custom: {
         options: (v) => {
-          const validator = new CustomIdValidator("Category ID")
+          const validator = new CustomIdValidator("Subcategory ID")
           validator.validate(v)
           return true
         },

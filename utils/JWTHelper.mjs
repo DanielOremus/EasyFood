@@ -2,27 +2,29 @@ import jwt from "jsonwebtoken"
 import config from "../config/default.mjs"
 
 class JWTHelper {
-  static parseBearer(bearerToken, headers) {
+  static accessSecret = config.jwt.access.secret
+  static refreshSecret = config.jwt.refresh.secret
+  static parseBearer(bearerToken) {
     try {
       let token
       if (bearerToken.startsWith("Bearer ")) token = bearerToken.slice(7)
-      const decoded = jwt.verify(token, JWTHelper.prepareSecret(headers))
+      const decoded = jwt.verify(token, JWTHelper.accessSecret)
       return decoded
     } catch (error) {
       throw new Error("Token is invalid")
     }
   }
 
-  static prepareToken(data, headers) {
-    return jwt.sign(data, JWTHelper.prepareSecret(headers), {
-      expiresIn: config.jwt.expireTime,
+  static prepareAccessToken(data) {
+    return jwt.sign(data, JWTHelper.accessSecret, {
+      expiresIn: config.jwt.access.expireTime,
     })
   }
 
-  static prepareSecret(headers) {
-    return (
-      config.jwt.secret + headers["user-agent"] + headers["accept-language"]
-    )
+  static prepareRefreshToken(data) {
+    return jwt.sign(data, JWTHelper.refreshSecret, {
+      expiresIn: config.jwt.refresh.expireTime,
+    })
   }
 }
 

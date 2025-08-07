@@ -1,5 +1,5 @@
 import { formatReviewsResponse } from "../../../utils/responseHelper.mjs"
-import ReviewService from "../models/review/ReviewService.mjs"
+import ReviewService from "../services/ReviewService.mjs"
 import { validationResult } from "express-validator"
 class ReviewController {
   static async addReview(req, res) {

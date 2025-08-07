@@ -1,4 +1,4 @@
-import CustomIdValidator from "../utils/CustomIdValidator.mjs"
+import CustomIdValidator from "./CustomIdValidator.mjs"
 import order from "../config/order.mjs"
 
 class OrderValidator {

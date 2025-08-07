@@ -1,5 +1,5 @@
 import { default as rewardConfig } from "../config/reward.mjs"
-import CustomIdValidator from "../utils/CustomIdValidator.mjs"
+import CustomIdValidator from "./CustomIdValidator.mjs"
 
 class RewardValidator {
   static defaultSchema = {

@@ -1,4 +1,4 @@
-import OrderService from "../models/order/OrderService.mjs"
+import OrderService from "../services/OrderService.mjs"
 import { validationResult } from "express-validator"
 import { formatOrderCreateResponse } from "../../../utils/responseHelper.mjs"
 

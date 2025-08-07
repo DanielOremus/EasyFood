@@ -1,4 +1,6 @@
-import UserService from "../models/user/UserService.mjs"
+import { setRefreshTokenCookie } from "../../../utils/authHelpers.mjs"
+import AuthService from "../services/AuthService.mjs"
+import UserService from "../services/UserService.mjs"
 import { validationResult } from "express-validator"
 
 class UserController {
@@ -26,7 +28,7 @@ class UserController {
 
     const { username, email, phone, password } = req.body
     try {
-      const { user, token } = await UserService.register(
+      const { user, accessToken, refreshToken } = await AuthService.register(
         {
           username,
           email,
@@ -36,12 +38,14 @@ class UserController {
         req.headers
       )
 
+      setRefreshTokenCookie(res, refreshToken)
+
       res.status(201).json({
         success: true,
         msg: "User created",
         data: {
           userId: user.id,
-          token,
+          token: accessToken,
         },
       })
     } catch (error) {
@@ -55,15 +59,17 @@ class UserController {
 
     const { email, password } = req.body
     try {
-      const { user, token } = await UserService.login(
+      const { user, accessToken, refreshToken } = await AuthService.login(
         { email, password },
         req.headers
       )
 
+      setRefreshTokenCookie(res, refreshToken)
+
       res.json({
         success: true,
         data: {
-          token,
+          token: accessToken,
           user: {
             id: user.id,
             username: user.username,

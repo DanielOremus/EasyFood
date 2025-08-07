@@ -1,5 +1,5 @@
 import { validationResult } from "express-validator"
-import CardService from "../models/card/CardService.mjs"
+import CardService from "../services/CardService.mjs"
 
 class CardController {
   static async getCardsByUserId(req, res) {

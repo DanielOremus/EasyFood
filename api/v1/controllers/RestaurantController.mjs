@@ -1,4 +1,4 @@
-import RestaurantService from "../models/restaurant/RestaurantService.mjs"
+import RestaurantService from "../services/RestaurantService.mjs"
 class RestaurantController {
   static async getRestaurantsList(req, res) {
     try {

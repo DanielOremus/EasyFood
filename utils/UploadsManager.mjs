@@ -1,10 +1,9 @@
 import fs from "fs/promises"
-import { __dirname } from "./path.mjs"
 import path from "path"
 import { debugLog } from "./logger.mjs"
 
 class UploadsManager {
-  static uploadsFolderPath = path.join(__dirname, "../uploads")
+  static uploadsFolderPath = path.join(import.meta.dirname, "../uploads")
   static uploadSubfolders = {
     avatars: path.join(UploadsManager.uploadsFolderPath, "./avatars"),
     dishes: path.join(UploadsManager.uploadsFolderPath, "./dishes"),

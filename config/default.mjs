@@ -12,8 +12,14 @@ const config = Object.freeze({
     password: process.env.SQL_PASSWORD,
   },
   jwt: {
-    secret: process.env.JWT_SECRET,
-    expireTime: "24h",
+    refresh: {
+      secret: process.env.JWT_REFRESH_SECRET,
+      expireTime: 7 * 24 * 3600 * 1000, //7d
+    },
+    access: {
+      secret: process.env.JWT_ACCESS_SECRET,
+      expireTime: 15 * 60 * 1000, //15 minutes
+    },
   },
 })
 export default config

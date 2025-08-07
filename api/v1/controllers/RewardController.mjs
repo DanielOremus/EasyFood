@@ -1,5 +1,5 @@
 import { validationResult } from "express-validator"
-import RewardService from "../models/reward/RewardService.mjs"
+import RewardService from "../services/RewardService.mjs"
 
 class RewardController {
   static async getRewardsByUserId(req, res) {
