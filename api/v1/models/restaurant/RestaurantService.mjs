@@ -45,7 +45,7 @@ class RestaurantService extends CRUDManager {
       model: Dish,
       as: "dishes",
       attributes: {
-        exclude: ["restaurantId"],
+        exclude: ["restaurantId", "subcategoryId"],
       },
     },
     options = {}
