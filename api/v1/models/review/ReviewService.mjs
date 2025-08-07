@@ -2,10 +2,10 @@ import Review from "./Review.mjs"
 import CRUDManager from "../CRUDManager.mjs"
 import { debugLog } from "../../../../utils/logger.mjs"
 import { sequelize } from "../../../../config/db.mjs"
-import RestaurantService from "../restaurant/RestaurantService.mjs"
 import DishService from "../dish/DishService.mjs"
 import CustomError from "../../../../utils/CustomError.mjs"
 import User from "../user/User.mjs"
+import Restaurant from "../restaurant/Restaurant.mjs"
 
 class ReviewService extends CRUDManager {
   async getAllByDishId(
@@ -26,33 +26,19 @@ class ReviewService extends CRUDManager {
   async create(data) {
     try {
       const result = await sequelize.transaction(async (t) => {
-        const restaurant = await RestaurantService.getById(
-          data.restaurantId,
-          null,
+        const dish = await DishService.getById(
+          data.dishId,
+          ["id"],
           {
-            model: DishService.model,
-            as: "dishes",
-            where: {
-              id: data.dishId,
-            },
-            required: false,
+            model: Restaurant,
           },
-          {
-            transaction: t,
-          }
+          { transaction: t }
         )
-        //   DishService.getOne(
-        //     { id: data.dishId, restaurantId: data.restaurantId },
-        //     null,
-        //     null,
-        //     { transaction: t }
-        //   ),
-        // ])
 
-        if (!restaurant) throw new CustomError("Restaurant not found", 404)
-        if (!restaurant.dishes.length) throw new CustomError("Dish not found")
-
-        return await super.create(data, { transaction: t })
+        return await super.create(
+          { ...data, restaurantId: dish.restaurant.id },
+          { transaction: t }
+        )
       })
 
       return result

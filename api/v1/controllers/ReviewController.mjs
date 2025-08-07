@@ -7,32 +7,28 @@ class ReviewController {
     if (!errors.isEmpty())
       return res.status(400).json({ success: false, msg: errors.array() })
 
-    const { dishId } = req.params
+    const dishId = req.params.id
     const userId = req.user.id
 
-    const { comment, rating, restaurantId } = req.body
+    const { comment, rating } = req.body
     try {
       const review = await ReviewService.create({
         dishId,
-        restaurantId,
         userId,
         comment,
         rating,
       })
 
-      res.status(201).json(
-        { success: true, msg: "Review added successfully" },
-        {
-          data: {
-            review: {
-              dishId: review.dishId,
-              restaurantId: review.restaurantId,
-              comment: review.comment,
-              rating: review.rating,
-            },
-          },
-        }
-      )
+      res.status(201).json({
+        success: true,
+        msg: "Review added successfully",
+        data: {
+          dishId: review.dishId,
+          restaurantId: review.restaurantId,
+          comment: review.comment,
+          rating: review.rating,
+        },
+      })
     } catch (error) {
       res.status(error.code || 500).json({ success: false, msg: error.message })
     }
