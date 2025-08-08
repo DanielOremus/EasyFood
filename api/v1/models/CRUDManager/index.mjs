@@ -99,6 +99,18 @@ class CRUDManager {
       throw new Error("Error while deleting item by id: " + error)
     }
   }
+  async deleteOne(filters, options) {
+    try {
+      const affectedRows = await this.model.destroy({
+        where: filters,
+        ...options,
+      })
+
+      return affectedRows
+    } catch (error) {
+      throw new Error("Error while deleting item: " + error)
+    }
+  }
 }
 
 export default CRUDManager

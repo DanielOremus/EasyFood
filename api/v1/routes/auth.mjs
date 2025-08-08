@@ -1,5 +1,5 @@
 import { Router } from "express"
-import UserController from "../controllers/UserController.mjs"
+import AuthController from "../controllers/AuthController.mjs"
 import rateLimiter from "../../../middlewares/rateLimiter.mjs"
 import UserValidator from "../../../validators/UserValidator.mjs"
 import { checkSchema } from "express-validator"
@@ -10,14 +10,18 @@ router.post(
   "/register",
   rateLimiter,
   checkSchema(UserValidator.registerSchema),
-  UserController.register
+  AuthController.register
 )
 
 router.post(
   "/login",
   rateLimiter,
   checkSchema(UserValidator.loginSchema),
-  UserController.login
+  AuthController.login
 )
+
+router.post("/refresh", rateLimiter, AuthController.refresh)
+
+router.post("/logout", AuthController.logout)
 
 export default router

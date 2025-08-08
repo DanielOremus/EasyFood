@@ -8,7 +8,10 @@ import config from "../../../config/default.mjs"
 import RewardService from "./RewardService.mjs"
 import UserReward from "../models/UserReward.mjs"
 import UserService from "./UserService.mjs"
-import { comparePasswords } from "../../../utils/authHelpers.mjs"
+import {
+  clearRefreshTokenCookie,
+  comparePasswords,
+} from "../../../utils/authHelpers.mjs"
 
 class AuthService {
   async register(data, headers) {
@@ -103,9 +106,52 @@ class AuthService {
       throw error
     }
   }
-  //TODO: finish methods
-  async refresh() {}
-  async logout() {}
+  async refresh(refreshToken, res) {
+    if (!refreshToken) throw new CustomError("No refresh token provided", 401)
+    try {
+      const storedToken = await RefreshTokenService.getOne({
+        token: refreshToken,
+      })
+      if (!storedToken) throw new CustomError("Invalid refresh token", 401)
+
+      if (new Date(storedToken.expiresAt) < Date.now()) {
+        await storedToken.destroy()
+        clearRefreshTokenCookie(res)
+        throw new CustomError("Refresh token is expired", 401)
+      }
+
+      const decoded = JWTHelper.parseRefreshToken(storedToken.token)
+
+      if (decoded.userId !== storedToken.userId)
+        throw new CustomError("Invalid refresh token", 401)
+
+      const user = await UserService.getById(storedToken.userId, [
+        "id",
+        "username",
+        "points",
+      ]).catch((error) => {
+        if (error instanceof CustomError)
+          throw new CustomError("User not found", 401)
+        throw error
+      })
+
+      const accessToken = JWTHelper.prepareAccessToken({ userId: user.id })
+
+      return { user, accessToken }
+    } catch (error) {
+      debugLog(error)
+      throw error
+    }
+  }
+  async logout(refreshToken) {
+    try {
+      if (!refreshToken) throw new CustomError("No refresh token provided", 401)
+      return await RefreshTokenService.deleteOne({ token: refreshToken })
+    } catch (error) {
+      debugLog(error)
+      throw error
+    }
+  }
 }
 
 export default new AuthService()

@@ -17,7 +17,7 @@ import OrderItemSide from "../models/OrderItemSide.mjs"
 //TODO: refactor class
 //TODO: add restaurant crud
 //TODO: add dish query support (pagination)
-//TODO: add refresh token auth
+//TODO: add auto clear for expired refresh tokens
 class OrderService extends CRUDManager {
   static rewardTypeActions = {
     [rewardConfig.types.PERCENTAGE]: ({ applyItemsPrice, discount }) =>
@@ -164,23 +164,6 @@ class OrderService extends CRUDManager {
       itemsPrice = item?.price || 0
     }
 
-    // if (reward.applySubcategoryId) {
-    //   for (const orderItem of orderItems) {
-    //     const subcategoryId = dishBindingObj[orderItem.dishId].subcategoryId
-    //     if (reward.applySubcategoryId === subcategoryId)
-    //       itemsPrice += orderItem.price * orderItem.quantity
-    //   }
-    // } else {
-    //   if (reward.applyCategoryId) {
-    //     for (const orderItem of orderItems) {
-    //       const category = dishBindingObj[orderItem.dishId].category
-    //       if (reward.applyCategoryId === category)
-    //         itemsPrice += orderItem.price * orderItem.quantity
-    //     }
-    //   } else {
-    //     itemsPrice = totalPrice
-    //   }
-    // }
     debugLog("items price:" + itemsPrice)
 
     if (itemsPrice > 0) {

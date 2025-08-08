@@ -13,6 +13,14 @@ export const setRefreshTokenCookie = (res, refreshToken) => {
     secure: config.appEnv === "production" ? true : false,
     sameSite: "strict",
     maxAge: config.jwt.refresh.expireTime,
-    path: "/api/v1/auth/refresh",
+    path: "/api/v1/auth",
+  })
+}
+export const clearRefreshTokenCookie = (res) => {
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    secure: config.appEnv === "production",
+    sameSite: "strict",
+    path: "/api/v1/auth",
   })
 }

@@ -18,7 +18,7 @@ function getAuthMiddleware(func) {
 
       next()
     } catch (error) {
-      res.status(401).json({ success: false, msg: "Token is invalid" })
+      res.status(401).json({ success: false, msg: error.message })
     }
   }
 }
