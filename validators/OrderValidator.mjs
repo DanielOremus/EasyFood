@@ -39,18 +39,17 @@ class OrderValidator {
           for (const item of v) {
             if (
               !Object.hasOwn(item, "dishId") ||
-              !Object.hasOwn(item, "quantity") ||
-              !Object.hasOwn(item, "sides")
+              !Object.hasOwn(item, "quantity")
             )
               throw new Error("Items have an item with invalid structure")
 
-            const { dishId, quantity, sides } = item
+            const { dishId, quantity, sides = [] } = item
 
             dishIdValidator.validate(dishId)
-            if (!Array.isArray(sides))
-              throw "Items have an item with invalid 'sides' type"
-            if (sides.length > 0)
-              sides.forEach((sideId) => sideIdValidator.validate(sideId))
+            if (sides && !Array.isArray(sides))
+              throw "Items have an item with invalid 'sides' type, must be array"
+
+            sides.forEach((sideId) => sideIdValidator.validate(sideId))
 
             const sanitizedQuantity = parseInt(quantity)
             if (!Number.isInteger(sanitizedQuantity) || sanitizedQuantity <= 0)
@@ -63,12 +62,14 @@ class OrderValidator {
         },
       },
       customSanitizer: {
-        options: (v) => {
-          const result = v.map((item) => ({
-            ...item,
+        options: (items) => {
+          const result = items.map((item) => ({
+            dishId: item.dishId.toString(),
             quantity: parseInt(item.quantity),
             notes: item.notes ? item.notes.toString().trim() : null,
-            sides: Array.isArray(item.sides) ? item.sides : [],
+            sides: Array.isArray(item.sides)
+              ? item.sides.map((sideId) => sideId.toString())
+              : [],
           }))
           return result
         },
@@ -99,7 +100,7 @@ class OrderValidator {
       },
       custom: {
         options: (v) => {
-          const allowedMethods = order.paymentMethods
+          const allowedMethods = Object.values(order.paymentMethods)
           if (!allowedMethods.includes(v))
             throw new Error(
               `Payment method '${v}' is not supported! Supported methods: ${allowedMethods.join(
@@ -113,11 +114,9 @@ class OrderValidator {
     cardId: {
       custom: {
         options: (v, { req }) => {
-          if (req.body.paymentMethod !== "card") return true
+          if (req.body.paymentMethod !== order.paymentMethods.CARD) return true
           const validator = new CustomIdValidator("Card ID")
           validator.validate(v)
-
-          return true
         },
       },
     },

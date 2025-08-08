@@ -4,11 +4,11 @@ import { sequelize } from "../../../config/db.mjs"
 const OrderItemSide = sequelize.define(
   "orderItemSide",
   {
-    sideName: {
+    name: {
       type: DataTypes.STRING(50),
       allowNull: false,
     },
-    sidePrice: {
+    price: {
       type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
     },

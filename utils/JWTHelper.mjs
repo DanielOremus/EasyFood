@@ -18,8 +18,6 @@ class JWTHelper {
   }
 
   static parseToken(token, secret) {
-    console.log(token)
-
     return jwt.verify(token, secret)
   }
   static parseAccessToken(token) {

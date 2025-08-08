@@ -44,19 +44,19 @@ class OrderController {
     } = req.body
 
     try {
-      const { order, dishBindingObj, rewardApplyMsg } =
-        await OrderService.create({
-          userId,
-          restaurantId,
-          items,
-          deliveryAddress,
-          paymentMethod,
-          cardId,
-          usePoints,
-          rewardCode,
-        })
+      const { order, orderItems, rewardApplyMsg } = await OrderService.create({
+        userId,
+        restaurantId,
+        items,
+        deliveryAddress,
+        paymentMethod,
+        cardId,
+        usePoints,
+        rewardCode,
+      })
 
-      const resOrder = formatOrderCreateResponse(order, dishBindingObj)
+      const resOrder = order.toJSON()
+      resOrder.items = orderItems
 
       return res.status(201).json({
         success: true,
@@ -75,7 +75,7 @@ class OrderController {
     const { status } = req.body
     const orderId = req.params.id
     try {
-      const { deltaPoints } = await OrderService.updateStatus({
+      const pointsEarned = await OrderService.updateStatus({
         orderId,
         status,
       })
@@ -86,7 +86,7 @@ class OrderController {
         data: {
           orderId,
           status,
-          pointsEarned: deltaPoints,
+          pointsEarned,
         },
       })
     } catch (error) {
