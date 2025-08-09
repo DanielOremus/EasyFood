@@ -8,10 +8,7 @@ import config from "../../../config/default.mjs"
 import RewardService from "./RewardService.mjs"
 import UserReward from "../models/UserReward.mjs"
 import UserService from "./UserService.mjs"
-import {
-  clearRefreshTokenCookie,
-  comparePasswords,
-} from "../../../utils/authHelpers.mjs"
+import { clearRefreshTokenCookie, comparePasswords } from "../../../utils/authHelpers.mjs"
 
 class AuthService {
   async register(data, headers) {
@@ -122,16 +119,14 @@ class AuthService {
 
       const decoded = JWTHelper.parseRefreshToken(storedToken.token)
 
-      if (decoded.userId !== storedToken.userId)
-        throw new CustomError("Invalid refresh token", 401)
+      if (decoded.userId !== storedToken.userId) throw new CustomError("Invalid refresh token", 401)
 
       const user = await UserService.getById(storedToken.userId, [
         "id",
         "username",
         "points",
       ]).catch((error) => {
-        if (error instanceof CustomError)
-          throw new CustomError("User not found", 401)
+        if (error instanceof CustomError) throw new CustomError("User not found", 401)
         throw error
       })
 
@@ -146,7 +141,7 @@ class AuthService {
   async logout(refreshToken) {
     try {
       if (!refreshToken) throw new CustomError("No refresh token provided", 401)
-      return await RefreshTokenService.deleteOne({ token: refreshToken })
+      return await RefreshTokenService.deleteMany({ token: refreshToken })
     } catch (error) {
       debugLog(error)
       throw error

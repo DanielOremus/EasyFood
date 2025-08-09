@@ -44,7 +44,7 @@ const Reward = sequelize.define(
     },
     code: {
       type: DataTypes.STRING(50),
-      allowNull: true,
+      allowNull: false,
       validate: {
         len: {
           args: [1, 50],
@@ -66,6 +66,11 @@ const Reward = sequelize.define(
     createdAt: "startDate",
     updatedAt: false,
     underscored: true,
+    indexes: [
+      {
+        fields: ["code"],
+      },
+    ],
   }
 )
 

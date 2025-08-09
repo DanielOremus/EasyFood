@@ -16,7 +16,6 @@ import { generateDishMap, generateOrderItemsArr } from "../../../utils/orderHelp
 
 //TODO: add restaurant crud
 //TODO: add dish query support (pagination)
-//TODO: add auto clear for expired refresh tokens
 class OrderService extends CRUDManager {
   static rewardTypeActions = {
     [rewardConfig.types.PERCENTAGE]: ({ applyItemsPrice, discount }) => applyItemsPrice * discount,

@@ -3,13 +3,23 @@ import logger from "morgan"
 import path from "path"
 import express from "express"
 import UploadsManager from "../UploadsManager.mjs"
+import SeedUploader from "../seedHelpers/SeedUploader.mjs"
+import { initTables, syncTables } from "../seedHelpers/syncTables.mjs"
 import helmet from "helmet"
 import config from "../../config/default.mjs"
 import cors from "cors"
-
+import { default as createEntityAssociations } from "../../api/v1/models/associations/index.mjs"
+import db from "../../config/db.mjs"
+import tokenCleanupTask from "../cleanupTokens.mjs"
 const __dirname = import.meta.dirname
 
-export const initApp = (app) => {
+export const initApp = async (app) => {
+  await db.connect()
+  createEntityAssociations()
+  tokenCleanupTask.start()
+  // await syncTables()
+  // SeedUploader.uploadAll()
+
   app.set("views", path.join(__dirname, "../../views"))
   app.set("view engine", "ejs")
 
@@ -17,10 +27,7 @@ export const initApp = (app) => {
   app.use(
     helmet({
       contentSecurityPolicy: false,
-      hsts:
-        config.appEnv === "production"
-          ? { maxAge: 31536000, includeSubDomains: true }
-          : false,
+      hsts: config.appEnv === "production" ? { maxAge: 31536000, includeSubDomains: true } : false,
     })
   )
   //Cors

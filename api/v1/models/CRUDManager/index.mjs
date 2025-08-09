@@ -4,12 +4,7 @@ class CRUDManager {
   constructor(model) {
     this.model = model
   }
-  async getAll(
-    filters = {},
-    projection = null,
-    populateParams = null,
-    options = {}
-  ) {
+  async getAll(filters = {}, projection = null, populateParams = null, options = {}) {
     try {
       return await this.model.findAll({
         where: filters,
@@ -35,12 +30,7 @@ class CRUDManager {
       return null
     }
   }
-  async getOne(
-    filters = {},
-    projection = null,
-    populateParams = null,
-    options = {}
-  ) {
+  async getOne(filters = {}, projection = null, populateParams = null, options = {}) {
     try {
       return await this.model.findOne({
         where: filters,
@@ -99,7 +89,7 @@ class CRUDManager {
       throw new Error("Error while deleting item by id: " + error)
     }
   }
-  async deleteOne(filters, options) {
+  async deleteMany(filters, options) {
     try {
       const affectedRows = await this.model.destroy({
         where: filters,
