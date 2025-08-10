@@ -15,8 +15,6 @@ class CardService extends CRUDManager {
         },
       })
 
-      console.log(user)
-
       return user.cards
     } catch (error) {
       debugLog(error)

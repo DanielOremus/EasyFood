@@ -24,7 +24,7 @@ class RewardService extends CRUDManager {
         required: false,
       })
 
-      return user.UserRewards
+      return user.userRewards || []
     } catch (error) {
       debugLog(error)
       throw error
@@ -32,12 +32,7 @@ class RewardService extends CRUDManager {
   }
   async getById(id, projection = null, populateParams = null, options = {}) {
     try {
-      const reward = await super.getById(
-        id,
-        projection,
-        populateParams,
-        options
-      )
+      const reward = await super.getById(id, projection, populateParams, options)
       if (!reward) throw new CustomError("Reward not found", 404)
 
       return reward
@@ -65,8 +60,7 @@ class RewardService extends CRUDManager {
           this.getById(data.rewardId, null, null, { transaction: t }),
         ])
 
-        if (user.userRewards.length > 0)
-          throw new CustomError("User already has this reward", 409)
+        if (user.userRewards.length > 0) throw new CustomError("User already has this reward", 409)
 
         const userReward = await UserReward.create(
           { userId: data.userId, rewardId: data.rewardId },

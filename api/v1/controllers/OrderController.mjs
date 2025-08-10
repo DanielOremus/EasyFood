@@ -14,8 +14,8 @@ class OrderController {
         success: true,
         page,
         perPage,
-        data: documents,
         count,
+        data: documents,
       })
     } catch (error) {
       res.status(error.code || 500).json({ success: false, msg: error.message })

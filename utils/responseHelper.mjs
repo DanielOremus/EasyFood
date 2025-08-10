@@ -9,3 +9,14 @@ export const formatReviewsResponse = (reviews) => {
     createdAt: review.createdAt,
   }))
 }
+
+export const formatUserRewardsResponse = (userRewards) => {
+  return userRewards.map((userReward) => {
+    userReward = userReward.toJSON()
+    return {
+      ...userReward,
+      ...userReward.reward,
+      reward: undefined,
+    }
+  })
+}

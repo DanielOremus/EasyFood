@@ -8,19 +8,10 @@ import { comparePasswords } from "../../../utils/authHelpers.mjs"
 import { debugLog } from "../../../utils/logger.mjs"
 
 class UserService extends CRUDManager {
-  async getAll(
-    filters = {},
-    projection = ["id", "username", "avatarUrl"],
-    populateParams = null
-  ) {
+  async getAll(filters = {}, projection = ["id", "username", "avatarUrl"], populateParams = null) {
     return await super.getAll(filters, projection, populateParams)
   }
-  async getById(
-    id,
-    projection = { exclude: ["password", "email"] },
-    populateParams = null,
-    options = {}
-  ) {
+  async getById(id, projection = { exclude: ["password"] }, populateParams = null, options = {}) {
     try {
       const user = await super.getById(id, projection, populateParams, options)
       if (!user) throw new CustomError("User not found", 404)
@@ -60,20 +51,12 @@ class UserService extends CRUDManager {
         })
 
         //Якщо шлях до аватару певного рядка не співпадає: спробуємо видалити старий аватар
-        if (
-          affected &&
-          currentAvatarUrl &&
-          data.avatarUrl &&
-          currentAvatarUrl !== data.avatarUrl
-        )
+        if (affected && currentAvatarUrl && data.avatarUrl && currentAvatarUrl !== data.avatarUrl)
           await UploadsManager.deleteAbsolute(currentAvatarUrl)
 
-        const user = await super.getById(
-          id,
-          { exclude: ["email", "password"] },
-          null,
-          { transaction: t }
-        )
+        const user = await super.getById(id, { exclude: ["email", "password"] }, null, {
+          transaction: t,
+        })
 
         return user
       })
@@ -82,11 +65,9 @@ class UserService extends CRUDManager {
     } catch (error) {
       //Якщо щось пішло не так: видаляємо раніше створений аватар
       if (fileName) {
-        await UploadsManager.deleteFromSubfolder("avatars", fileName).catch(
-          (e) => {
-            console.log("Failed to delete uploaded avatar: " + e.message)
-          }
-        )
+        await UploadsManager.deleteFromSubfolder("avatars", fileName).catch((e) => {
+          console.log("Failed to delete uploaded avatar: " + e.message)
+        })
       }
 
       debugLog(error)
@@ -104,11 +85,7 @@ class UserService extends CRUDManager {
         const isValid = await comparePasswords(data.password, user.password)
         if (!isValid) throw new CustomError("Incorrect password", 400)
         const isSame = await comparePasswords(data.newPassword, user.password)
-        if (isSame)
-          throw new CustomError(
-            "Current password is the same as the new one",
-            400
-          )
+        if (isSame) throw new CustomError("Current password is the same as the new one", 400)
         await super.update(
           id,
           { password: data.newPassword },

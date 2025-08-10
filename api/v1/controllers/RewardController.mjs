@@ -1,13 +1,14 @@
 import { validationResult } from "express-validator"
 import RewardService from "../services/RewardService.mjs"
+import { formatUserRewardsResponse } from "../../../utils/responseHelper.mjs"
 
 class RewardController {
   static async getRewardsByUserId(req, res) {
     const userId = req.params.id
     try {
       const userRewards = await RewardService.getAllByUserId(userId)
-
-      res.json({ success: true, data: userRewards })
+      const resRewards = formatUserRewardsResponse(userRewards)
+      res.json({ success: true, data: resRewards })
     } catch (error) {
       res.status(error.code || 500).json({ success: false, msg: error.message })
     }
@@ -23,8 +24,7 @@ class RewardController {
   }
   static async addRewardForUser(req, res) {
     const errors = validationResult(req)
-    if (!errors.isEmpty())
-      return res.status(400).json({ success: false, msg: errors.array() })
+    if (!errors.isEmpty()) return res.status(400).json({ success: false, msg: errors.array() })
 
     const userId = req.params.id
     const rewardId = req.body.rewardId

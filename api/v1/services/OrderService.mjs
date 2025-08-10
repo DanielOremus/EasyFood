@@ -38,7 +38,18 @@ class OrderService extends CRUDManager {
         {
           model: OrderItem,
           as: "items",
+          attributes: {
+            exclude: ["orderId"],
+          },
+          include: {
+            model: OrderItemSide,
+            as: "sides",
+            attributes: {
+              exclude: ["orderItemId", "sideId"],
+            },
+          },
         },
+
         {
           order: [["createdAt", "DESC"]],
         }

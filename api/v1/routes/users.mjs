@@ -19,7 +19,7 @@ import RewardValidator from "../../../validators/RewardValidator.mjs"
 
 const router = Router()
 
-router.get("/", ensureAuthenticated, UserController.getUsersList)
+router.get("/", ensureAdmin, UserController.getUsersList)
 
 router.get(
   "/:id/locations",
@@ -33,11 +33,7 @@ router.get(
   OrderController.getOrdersByUserId
 )
 
-router.get(
-  "/:id",
-  ensureAccOwnerOrAdmin("params", "id"),
-  UserController.getUserById
-)
+router.get("/:id", ensureAccOwnerOrAdmin("params", "id"), UserController.getUserById)
 
 router.get(
   "/:id/rewards",
@@ -45,11 +41,7 @@ router.get(
   RewardController.getRewardsByUserId
 )
 
-router.get(
-  "/:id/cards",
-  ownerChecker("params", "id"),
-  CardController.getCardsByUserId
-)
+router.get("/:id/cards", ownerChecker("params", "id"), CardController.getCardsByUserId)
 
 router.post(
   "/:id/locations",
