@@ -2,9 +2,9 @@ import RestaurantService from "../services/RestaurantService.mjs"
 class RestaurantController {
   static async getRestaurantsList(req, res) {
     try {
-      const restaurants = await RestaurantService.getAllWithQuery(req.query)
+      const { documents, count, page, perPage } = await RestaurantService.getAllWithQuery(req.query)
 
-      res.json({ success: true, data: restaurants })
+      res.json({ success: true, page, perPage, data: documents, count })
     } catch (error) {
       res.status(error.code || 500).json({ success: false, msg: error.message })
     }

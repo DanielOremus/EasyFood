@@ -1,3 +1,4 @@
+import { setValidQueryPagination } from "../../../../utils/selectionHelpers/paginationHelpers.mjs"
 import SelectionHelper from "../../../../utils/selectionHelpers/SelectionHelper.mjs"
 
 class CRUDManager {
@@ -15,6 +16,39 @@ class CRUDManager {
     } catch (error) {
       console.log("Error while getting list: " + error.message)
       return []
+    }
+  }
+
+  async getAllWithQuery(
+    reqQuery,
+    fieldsConfig,
+    paginationDefaultData = {},
+    filters = {},
+    projection = null,
+    populateParams = null,
+    options = {}
+  ) {
+    try {
+      setValidQueryPagination(reqQuery, paginationDefaultData)
+      const filtersOptions = SelectionHelper.applyFiltersSelection(reqQuery, fieldsConfig, filters)
+      const actionsOptions = SelectionHelper.applyActionsSelection(reqQuery)
+
+      const count = await this.model.count({
+        where: filtersOptions,
+      })
+
+      const documents = await this.model.findAll({
+        where: filtersOptions,
+        attributes: projection,
+        include: populateParams,
+        ...options,
+        ...actionsOptions,
+      })
+
+      return { documents, count, page: reqQuery.page, perPage: reqQuery.perPage }
+    } catch (error) {
+      console.log("Error while getting list with query: " + error.message)
+      return { documents: [], count: 0 }
     }
   }
 

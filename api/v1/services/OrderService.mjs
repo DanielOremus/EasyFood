@@ -9,7 +9,6 @@ import OrderStatusHandler from "./OrderStatusHandler.mjs"
 import { default as businessValidator } from "../businessValidators/order.mjs"
 import { debugLog } from "../../../utils/logger.mjs"
 import CustomError from "../../../utils/CustomError.mjs"
-import { default as rewardConfig } from "../../../config/reward.mjs"
 import OrderItemSide from "../models/OrderItemSide.mjs"
 import OrderPriceService from "./OrderPriceService.mjs"
 import { generateDishMap, generateOrderItemsArr } from "../../../utils/orderHelpers.mjs"
@@ -17,17 +16,23 @@ import { generateDishMap, generateOrderItemsArr } from "../../../utils/orderHelp
 //TODO: add restaurant crud
 //TODO: add dish query support (pagination)
 class OrderService extends CRUDManager {
-  static rewardTypeActions = {
-    [rewardConfig.types.PERCENTAGE]: ({ applyItemsPrice, discount }) => applyItemsPrice * discount,
-    [rewardConfig.types.FIXED]: ({ applyItemsPrice, discount }) =>
-      Math.min(discount, applyItemsPrice),
-    [rewardConfig.types.FREE_ITEM]: ({ applyItemsPrice }) => applyItemsPrice,
+  static fieldsConfig = [
+    {
+      fieldName: "status",
+      filterCategory: "search",
+    },
+  ]
+  static paginationDefaultData = {
+    page: 0,
+    perPage: 5,
   }
-
-  async getAllByUserId(id) {
+  async getAllByUserId(id, reqQuery) {
     try {
       await UserService.getById(id)
-      return await super.getAll(
+      return await super.getAllWithQuery(
+        reqQuery,
+        OrderService.fieldsConfig,
+        OrderService.paginationDefaultData,
         { userId: id },
         { exclude: ["userId"] },
         {

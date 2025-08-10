@@ -58,20 +58,18 @@ class QueryParser {
   static parseFilters(query, fieldsConfig = []) {
     const filters = []
 
-    fieldsConfig.forEach(
-      ({ fieldName, filterCategory, refModel, matchField }) => {
-        if (query[fieldName]) {
-          filters.push(
-            ...this[filterCategory](
-              fieldName,
-              query[fieldName]
-              //   refModel,
-              //   matchField
-            )
+    fieldsConfig.forEach(({ fieldName, filterCategory, refModel, matchField }) => {
+      if (query[fieldName]) {
+        filters.push(
+          ...this[filterCategory](
+            fieldName,
+            query[fieldName]
+            //   refModel,
+            //   matchField
           )
-        }
+        )
       }
-    )
+    })
 
     return filters
   }
@@ -82,13 +80,13 @@ class QueryParser {
       actions.push({
         type: "sort",
         field,
-        order: order === "desc" ? "ASC" : "DESC",
+        order: order.toUpperCase(), //order=desc/asc
       })
     }
     if (query.page >= 0 && query.perPage > 0) {
       actions.push({
         type: "skip",
-        value: parseInt(query.page * query.perPage),
+        value: parseInt(query.page) * parseInt(query.perPage),
       })
       actions.push({ type: "limit", value: parseInt(query.perPage) })
     }

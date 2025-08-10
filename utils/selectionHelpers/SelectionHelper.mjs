@@ -2,57 +2,35 @@ import QueryParser from "./QueryParser.mjs"
 import { Op } from "sequelize"
 
 class SelectionHelper {
-  static applyFilters(options, filters) {
+  static applyFilters(whereOptions, filters) {
     for (const filterObj of filters) {
-      if (!Object.hasOwn(options, "where")) options.where = {}
       switch (filterObj.filterType) {
         case "minValue":
-          options.where[filterObj.fieldName] = {
+          whereOptions[filterObj.fieldName] = {
             [Op.gte]: filterObj.filterValue,
           }
           break
         case "maxValue":
-          options.where[filterObj.fieldName] = {
+          whereOptions[filterObj.fieldName] = {
             [Op.lte]: filterObj.filterValue,
           }
           break
         case "in":
-          options.where[filterObj.fieldName] = {
+          whereOptions[filterObj.fieldName] = {
             [Op.in]: filterObj.filterValue,
           }
           break
         case "search":
-          options.where[filterObj.fieldName] = {
+          whereOptions[filterObj.fieldName] = {
             [Op.like]: `%${filterObj.filterValue}%`,
           }
           break
+
         default:
           console.log(`Unsupported filterType: ${filterObj.filterType}`)
       }
     }
-    //!!BACKUP
-    // filters.forEach((filterObj) => {
-    //   switch (filterObj.filterType) {
-    //     case "minValue":
-    //       query.where(filterObj.fieldName).gte(filterObj.filterValue)
-    //       break
-    //     case "maxValue":
-    //       query.where(filterObj.fieldName).lte(filterObj.filterValue)
-    //       break
-    //     case "in":
-    //       query.where(filterObj.fieldName).in(filterObj.filterValue)
-    //       break
-    //     case "search":
-    //       query
-    //         .where(filterObj.fieldName)
-    //         .regex(new RegExp(filterObj.filterValue, "i"))
-    //       break
-    //     default:
-    //       console.log(`Unsupported filterType: ${filterObj.filterType}`)
-    //   }
-    // })
-
-    return options
+    return whereOptions
   }
   static applyActions(options, actions) {
     actions.forEach((actionObj) => {
@@ -117,12 +95,11 @@ class SelectionHelper {
 
     return optionsObj
   }
-  static async applyFiltersSelection(reqQuery, fieldsConfig) {
+  static applyFiltersSelection(reqQuery, fieldsConfig, filterOptions) {
     const filters = QueryParser.parseFilters(reqQuery, fieldsConfig)
     console.log("filters-----------------")
 
     console.log(filters)
-
     // for (const filterObj of filters) {
     //   if (filterObj.filterType === "in" && filterObj.refModel) {
     //     const docs = await mongoose
@@ -133,16 +110,19 @@ class SelectionHelper {
     //   }
     // }
 
-    if (filters.length) optionsObj = this.applyFilters(optionsObj, filters)
-    return filters
+    if (filters.length) filterOptions = this.applyFilters(filterOptions, filters)
+    return filterOptions
   }
-  static applyActionsSelection(reqQuery, optionsObj) {
+  static applyActionsSelection(reqQuery) {
     const actions = QueryParser.parseActions(reqQuery)
     console.log("actions-----------------")
 
     console.log(actions)
-    if (actions.length) optionsObj = this.applyActions(query, actions)
-    return optionsObj
+
+    let actionsOptions = {}
+
+    if (actions.length) actionsOptions = this.applyActions(actionsOptions, actions)
+    return actionsOptions
   }
   // static applyMetaSelection(reqQuery, metaConfig, documents) {
   //   const meta = QueryParser.parseMeta(reqQuery, metaConfig)

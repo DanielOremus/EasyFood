@@ -1,16 +1,21 @@
 import OrderService from "../services/OrderService.mjs"
 import { validationResult } from "express-validator"
-import { formatOrderCreateResponse } from "../../../utils/responseHelper.mjs"
 
 class OrderController {
   static async getOrdersByUserId(req, res) {
     const userId = req.params.userId
     try {
-      const orders = await OrderService.getAllByUserId(userId)
+      const { documents, count, page, perPage } = await OrderService.getAllByUserId(
+        userId,
+        req.query
+      )
 
       res.json({
         success: true,
-        data: orders,
+        page,
+        perPage,
+        data: documents,
+        count,
       })
     } catch (error) {
       res.status(error.code || 500).json({ success: false, msg: error.message })
@@ -28,20 +33,12 @@ class OrderController {
   }
   static async createOrder(req, res) {
     const errors = validationResult(req)
-    if (!errors.isEmpty())
-      return res.status(400).json({ success: false, msg: errors.array() })
+    if (!errors.isEmpty()) return res.status(400).json({ success: false, msg: errors.array() })
 
     const userId = req.user.id
 
-    const {
-      restaurantId,
-      items,
-      deliveryAddress,
-      paymentMethod,
-      cardId,
-      usePoints,
-      rewardCode,
-    } = req.body
+    const { restaurantId, items, deliveryAddress, paymentMethod, cardId, usePoints, rewardCode } =
+      req.body
 
     try {
       const { order, orderItems, rewardApplyMsg } = await OrderService.create({
@@ -69,8 +66,7 @@ class OrderController {
   }
   static async updateOrderStatus(req, res) {
     const errors = validationResult(req)
-    if (!errors.isEmpty())
-      return res.status(400).json({ success: false, msg: errors.array() })
+    if (!errors.isEmpty()) return res.status(400).json({ success: false, msg: errors.array() })
 
     const { status } = req.body
     const orderId = req.params.id
