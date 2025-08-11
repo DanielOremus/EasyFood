@@ -2,6 +2,7 @@ class RestaurantValidator {
   static defaultSchema = {
     name: {
       trim: true,
+      escape: true,
       notEmpty: {
         errorMessage: "Name is required",
         bail: true,
@@ -12,10 +13,10 @@ class RestaurantValidator {
         },
         errorMessage: "Name must be at most 255 chars long",
       },
-      escape: true,
     },
     address: {
       trim: true,
+      escape: true,
       notEmpty: {
         errorMessage: "Address is required",
         bail: true,
@@ -26,7 +27,6 @@ class RestaurantValidator {
         },
         errorMessage: "Address must be at most 255 chars long",
       },
-      escape: true,
     },
     lat: {
       notEmpty: {
@@ -78,6 +78,7 @@ class RestaurantValidator {
       },
     },
     openHours: {
+      escape: true,
       notEmpty: {
         errorMessage: "Open hours are required",
         bail: true,
@@ -88,10 +89,10 @@ class RestaurantValidator {
         },
         errorMessage: "Open hours must be at most 255 chars long",
       },
-      escape: true,
     },
     description: {
       trim: true,
+      escape: true,
       notEmpty: {
         errorMessage: "Description is required",
         bail: true,
@@ -102,10 +103,10 @@ class RestaurantValidator {
         },
         errorMessage: "Description must be at most 255 chars long",
       },
-      escape: true,
     },
     cuisineType: {
       trim: true,
+      escape: true,
       notEmpty: {
         errorMessage: "Cuisine type is required",
         bail: true,
@@ -116,7 +117,6 @@ class RestaurantValidator {
         },
         errorMessage: "Cuisine type be at most 100 chars long",
       },
-      escape: true,
     },
   }
 }

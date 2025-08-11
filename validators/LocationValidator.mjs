@@ -12,7 +12,6 @@ class LocationValidator {
         },
         errorMessage: "Address can contain at most 255 chars",
       },
-      escape: true,
     },
     lat: {
       notEmpty: {

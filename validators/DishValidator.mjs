@@ -27,6 +27,7 @@ class DishValidator {
     },
     name: {
       trim: true,
+      escape: true,
       notEmpty: {
         errorMessage: "Name is required",
         bail: true,
@@ -37,11 +38,11 @@ class DishValidator {
         },
         errorMessage: "Name must be at most 50 chars long",
       },
-      escape: true,
     },
     description: {
       optional: true,
       trim: true,
+      escape: true,
       notEmpty: {
         errorMessage: "Description is required",
         bail: true,
@@ -52,7 +53,6 @@ class DishValidator {
         },
         errorMessage: "Description must be at most 500 chars long",
       },
-      escape: true,
     },
     price: {
       trim: true,

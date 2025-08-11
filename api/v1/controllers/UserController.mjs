@@ -22,11 +22,10 @@ class UserController {
 
   static async updateUserById(req, res) {
     const errors = validationResult(req)
-    if (!errors.isEmpty())
-      return res.status(400).json({ success: false, msg: errors.array() })
+    if (!errors.isEmpty()) return res.status(400).json({ success: false, msg: errors.array() })
 
     const id = req.params.id
-    const { username, phone, avatarUrl } = req.body
+    const { username, phone, email, avatarUrl } = req.body
 
     let avatar = avatarUrl
 
@@ -37,6 +36,7 @@ class UserController {
       const user = await UserService.update(id, {
         username,
         phone,
+        email,
         avatar,
       })
 
@@ -47,8 +47,7 @@ class UserController {
   }
   static async updatePassword(req, res) {
     const errors = validationResult(req)
-    if (!errors.isEmpty())
-      return res.status(400).json({ success: false, msg: errors.array() })
+    if (!errors.isEmpty()) return res.status(400).json({ success: false, msg: errors.array() })
 
     const id = req.params.id
     const { password, newPassword } = req.body

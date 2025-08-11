@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from "uuid"
 import CustomError from "../../../utils/CustomError.mjs"
 import { comparePasswords } from "../../../utils/authHelpers.mjs"
 import { debugLog } from "../../../utils/logger.mjs"
+import { Op } from "sequelize"
 
 class UserService extends CRUDManager {
   async getAll(filters = {}, projection = ["id", "username", "avatarUrl"], populateParams = null) {
@@ -25,9 +26,26 @@ class UserService extends CRUDManager {
     let fileName
     try {
       const result = await sequelize.transaction(async (t) => {
-        const exists = await this.getById(id, ["avatarUrl"], null, {
+        const isEmailTaken = await super.getAll(
+          {
+            id: {
+              [Op.ne]: id,
+            },
+            email: data.email,
+          },
+          ["id"],
+          null,
+          {
+            transaction: t,
+          }
+        )
+
+        if (isEmailTaken.length > 0) throw new CustomError("This email is already in use", 400)
+        const exists = await super.getById(id, ["avatarUrl"], null, {
           transaction: t,
         })
+
+        if (!exists) throw new CustomError("User not found", 404)
 
         const currentAvatarUrl = exists.avatarUrl
         if (data.avatar) {
@@ -54,7 +72,7 @@ class UserService extends CRUDManager {
         if (affected && currentAvatarUrl && data.avatarUrl && currentAvatarUrl !== data.avatarUrl)
           await UploadsManager.deleteAbsolute(currentAvatarUrl)
 
-        const user = await super.getById(id, { exclude: ["email", "password"] }, null, {
+        const user = await super.getById(id, { exclude: ["password"] }, null, {
           transaction: t,
         })
 

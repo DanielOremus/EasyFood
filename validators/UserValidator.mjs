@@ -84,12 +84,7 @@ class UserValidator {
     },
   }
   static newPasswordSchema = {
-    password: {
-      trim: true,
-      notEmpty: {
-        errorMessage: "Password is required",
-      },
-    },
+    password: UserValidator.loginSchema.password,
     newPassword: {
       trim: true,
       notEmpty: {
@@ -101,42 +96,14 @@ class UserValidator {
           min: 3,
           max: 16,
         },
-        errorMessage:
-          "New password must be at least 3 and at most 16 chars long",
+        errorMessage: "New password must be at least 3 and at most 16 chars long",
       },
     },
   }
   static updateSchema = {
-    username: {
-      trim: true,
-      escape: true,
-      notEmpty: {
-        errorMessage: "Username is required",
-        bail: true,
-      },
-      isLength: {
-        options: {
-          min: 3,
-          max: 50,
-        },
-        errorMessage: "Username must be at least 3 and at most 50 chars long",
-      },
-    },
-    phone: {
-      trim: true,
-      notEmpty: {
-        errorMessage: "Phone number is required",
-        bail: true,
-      },
-      isNumeric: {
-        errorMessage: "Must provide a valid phone number",
-        bail: true,
-      },
-      isMobilePhone: {
-        options: ["uk-UA"],
-        errorMessage: "Must provide a valid UA phone number",
-      },
-    },
+    username: UserValidator.registerSchema.username,
+    phone: UserValidator.registerSchema.phone,
+    email: UserValidator.registerSchema.email,
     avatarUrl: {
       optional: true,
       trim: true,

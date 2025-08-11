@@ -1,16 +1,5 @@
-import CustomIdValidator from "../utils/CustomIdValidator.mjs"
-
 class ReviewValidator {
   static defaultSchema = {
-    // restaurantId: {
-    //   custom: {
-    //     options: (v) => {
-    //       const validator = new CustomIdValidator("Restaurant ID")
-    //       validator.validate(v)
-    //       return true
-    //     },
-    //   },
-    // },
     rating: {
       trim: true,
       notEmpty: {
