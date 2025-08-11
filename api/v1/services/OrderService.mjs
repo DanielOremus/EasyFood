@@ -13,7 +13,6 @@ import OrderItemSide from "../models/OrderItemSide.mjs"
 import OrderPriceService from "./OrderPriceService.mjs"
 import { generateDishMap, generateOrderItemsArr } from "../../../utils/orderHelpers.mjs"
 
-//TODO: add restaurant crud
 //TODO: add dish query support (pagination)
 class OrderService extends CRUDManager {
   static fieldsConfig = [

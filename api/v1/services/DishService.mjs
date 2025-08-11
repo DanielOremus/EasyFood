@@ -46,11 +46,7 @@ class DishService extends CRUDManager {
   ) {
     try {
       await RestaurantService.getById(restId)
-      return await super.getAll(
-        { restaurantId: restId },
-        projection,
-        populateParams
-      )
+      return await super.getAll({ restaurantId: restId }, projection, populateParams)
     } catch (error) {
       debugLog(error)
       throw error
@@ -114,11 +110,9 @@ class DishService extends CRUDManager {
     } catch (error) {
       //Якщо щось пішло не так: видаляємо раніше створене зображення страви
       if (fileName) {
-        await UploadsManager.deleteFromSubfolder("dishes", fileName).catch(
-          (e) => {
-            console.log("Failed to delete uploaded dish image: " + e.message)
-          }
-        )
+        await UploadsManager.deleteFromSubfolder("dishes", fileName).catch((e) => {
+          console.log("Failed to delete uploaded dish image: " + e.message)
+        })
       }
       debugLog(error)
       throw error
@@ -128,9 +122,18 @@ class DishService extends CRUDManager {
     let fileName
     try {
       const result = await sequelize.transaction(async (t) => {
-        const exists = await this.getById(id, ["imageUrl"], null, {
+        await Promise.all([
+          RestaurantService.getById(data.restaurantId, ["id"], null, {
+            transaction: t,
+          }),
+          SubcategoryService.getById(data.subcategoryId, ["id"], null, {
+            transaction: t,
+          }),
+        ])
+        const exists = await super.getById(id, ["imageUrl"], null, {
           transaction: t,
         })
+        if (!exists) throw new CustomError("Dish not found", 404)
         const currentImageUrl = exists.imageUrl
         if (data.image?.buffer) {
           fileName = `dish_${uuidv4()}.png`
@@ -146,12 +149,7 @@ class DishService extends CRUDManager {
           transaction: t,
         })
         //Якщо шлях до аватару певного рядка не співпадає: спробуємо видалити старий аватар
-        if (
-          affected &&
-          currentImageUrl &&
-          data.imageUrl &&
-          currentImageUrl !== data.imageUrl
-        )
+        if (affected && currentImageUrl && currentImageUrl !== data.imageUrl)
           await UploadsManager.deleteAbsolute(currentImageUrl)
 
         return await super.getById(id, null, null, { transaction: t })
@@ -159,11 +157,9 @@ class DishService extends CRUDManager {
       return result
     } catch (error) {
       if (fileName) {
-        await UploadsManager.deleteFromSubfolder("dishes", fileName).catch(
-          (e) => {
-            console.log("Failed to delete uploaded dish image: " + e.message)
-          }
-        )
+        await UploadsManager.deleteFromSubfolder("dishes", fileName).catch((e) => {
+          console.log("Failed to delete uploaded dish image: " + e.message)
+        })
       }
       debugLog(error)
       throw error

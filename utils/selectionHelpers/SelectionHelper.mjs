@@ -51,41 +51,6 @@ class SelectionHelper {
     })
     return options
   }
-  // static localizeField(obj, path, lang) {
-  //   const pathList = path.split(".")
-  //   const key = pathList.pop()
-  //   const pointer = pathList.reduce((acc, currentProp) => {
-  //     if (acc[currentProp] === undefined) {
-  //       console.log(
-  //         `Localizing field not found, path: ${path}, field: ${currentProp}`
-  //       )
-  //       return acc
-  //     }
-  //     return acc[currentProp]
-  //   }, obj)
-  //   const value =
-  //     pointer[key][lang] || pointer[key][config.fallbackLocale] || pointer[key]
-  //   pointer[key] = value
-  // }
-  // static applyMeta(documents, meta) {
-  //   for (const key in meta) {
-  //     const metaObj = meta[key]
-  //     switch (key) {
-  //       case "lang":
-  //         const lang = metaObj.value
-  //         documents.forEach((doc, i, arr) => {
-  //           metaObj.fields.forEach((fieldStr) => {
-  //             SelectionHelper.localizeField(arr[i], fieldStr, lang)
-  //           })
-  //         })
-  //         break
-
-  //       default:
-  //         console.log(`Unsupported meta type: ${key}`)
-  //         break
-  //     }
-  //   }
-  // }
   static applySelection(reqQuery, fieldsConfig) {
     const { actions, filters } = QueryParser.parse(reqQuery, fieldsConfig)
 
@@ -95,21 +60,11 @@ class SelectionHelper {
 
     return optionsObj
   }
-  static applyFiltersSelection(reqQuery, fieldsConfig, filterOptions) {
+  static applyFiltersSelection(reqQuery, fieldsConfig, filterOptions = {}) {
     const filters = QueryParser.parseFilters(reqQuery, fieldsConfig)
     console.log("filters-----------------")
 
     console.log(filters)
-    // for (const filterObj of filters) {
-    //   if (filterObj.filterType === "in" && filterObj.refModel) {
-    //     const docs = await mongoose
-    //       .model(filterObj.refModel)
-    //       .find({ [filterObj.matchField]: { $in: filterObj.filterValue } })
-    //       .lean()
-    //     filterObj.filterValue = docs.map((doc) => doc._id.toString())
-    //   }
-    // }
-
     if (filters.length) filterOptions = this.applyFilters(filterOptions, filters)
     return filterOptions
   }
@@ -124,14 +79,6 @@ class SelectionHelper {
     if (actions.length) actionsOptions = this.applyActions(actionsOptions, actions)
     return actionsOptions
   }
-  // static applyMetaSelection(reqQuery, metaConfig, documents) {
-  //   const meta = QueryParser.parseMeta(reqQuery, metaConfig)
-
-  //   console.log("meta----------------------")
-  //   console.log(meta)
-
-  //   if (Object.keys(meta).length) this.applyMeta(documents, meta)
-  // }
 }
 
 export default SelectionHelper

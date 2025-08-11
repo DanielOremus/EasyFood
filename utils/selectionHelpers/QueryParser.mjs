@@ -34,14 +34,12 @@ class QueryParser {
 
     return range
   }
-  static list(fieldName, fieldValue, refModel, matchField) {
+  static list(fieldName, fieldValue) {
     return [
       {
         fieldName,
         filterType: "in",
         filterValue: fieldValue.split(","),
-        // refModel,
-        // matchField,
       },
     ]
   }
@@ -58,16 +56,9 @@ class QueryParser {
   static parseFilters(query, fieldsConfig = []) {
     const filters = []
 
-    fieldsConfig.forEach(({ fieldName, filterCategory, refModel, matchField }) => {
+    fieldsConfig.forEach(({ fieldName, filterCategory }) => {
       if (query[fieldName]) {
-        filters.push(
-          ...this[filterCategory](
-            fieldName,
-            query[fieldName]
-            //   refModel,
-            //   matchField
-          )
-        )
+        filters.push(...this[filterCategory](fieldName, query[fieldName]))
       }
     })
 
@@ -92,19 +83,9 @@ class QueryParser {
     }
     return actions
   }
-  //   static parseMeta(query, metaConfig = []) {
-  //     const meta = {}
-
-  //     metaConfig.forEach((obj) => {
-  //       if (query[obj.type]) meta[obj.type] = this[obj.type](query, obj)
-  //     })
-
-  //     return meta
-  //   }
   static parse(query, fieldsConfig) {
     const actions = this.parseActions(query)
     const filters = this.parseFilters(query, fieldsConfig)
-    // const meta = this.parseMeta(query, metaConfig)
 
     return { actions, filters }
   }

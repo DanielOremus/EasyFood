@@ -1,3 +1,4 @@
+import { debugLog } from "../../../../utils/logger.mjs"
 import { setValidQueryPagination } from "../../../../utils/selectionHelpers/paginationHelpers.mjs"
 import SelectionHelper from "../../../../utils/selectionHelpers/SelectionHelper.mjs"
 
@@ -33,6 +34,7 @@ class CRUDManager {
       const filtersOptions = SelectionHelper.applyFiltersSelection(reqQuery, fieldsConfig, filters)
       const actionsOptions = SelectionHelper.applyActionsSelection(reqQuery)
 
+      console.log(filtersOptions)
       const count = await this.model.count({
         where: filtersOptions,
       })
@@ -47,7 +49,8 @@ class CRUDManager {
 
       return { documents, count, page: reqQuery.page, perPage: reqQuery.perPage }
     } catch (error) {
-      console.log("Error while getting list with query: " + error.message)
+      debugLog("Error while getting list with query: " + error.message)
+      debugLog(error)
       return { documents: [], count: 0 }
     }
   }
