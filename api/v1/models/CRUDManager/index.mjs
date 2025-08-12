@@ -31,18 +31,21 @@ class CRUDManager {
   ) {
     try {
       setValidQueryPagination(reqQuery, paginationDefaultData)
-      const filtersOptions = SelectionHelper.applyFiltersSelection(reqQuery, fieldsConfig, filters)
+      const { filterOptions, includeFilterOptions } = SelectionHelper.applyFiltersSelection(
+        reqQuery,
+        fieldsConfig,
+        filters
+      )
       const actionsOptions = SelectionHelper.applyActionsSelection(reqQuery)
-
-      console.log(filtersOptions)
       const count = await this.model.count({
-        where: filtersOptions,
+        where: filterOptions,
+        include: includeFilterOptions,
       })
 
       const documents = await this.model.findAll({
-        where: filtersOptions,
+        where: filterOptions,
         attributes: projection,
-        include: populateParams,
+        include: [...includeFilterOptions, { ...populateParams }],
         ...options,
         ...actionsOptions,
       })

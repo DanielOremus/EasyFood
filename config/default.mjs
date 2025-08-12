@@ -4,7 +4,20 @@ configDotenv({ quiet: true })
 
 const config = Object.freeze({
   appEnv: process.env.APP_ENV || "production",
-  port: process.env.APP_PORT,
+  api: {
+    protocol: process.env.API_PROTOCOL,
+    host: process.env.API_HOST,
+    port: process.env.API_PORT,
+    version: process.env.API_VERSION,
+    get baseUrl() {
+      let url = `${this.protocol}://${this.host}`
+      if (this.port && ![80, 443].includes(this.port)) {
+        url += `:${this.port}`
+      }
+      url += `/api/${this.version}`
+      return url
+    },
+  },
   db: {
     user: process.env.SQL_USER,
     host: process.env.SQL_HOST,
@@ -20,6 +33,10 @@ const config = Object.freeze({
       secret: process.env.JWT_ACCESS_SECRET,
       expireTime: 15 * 60 * 1000, //15 minutes
     },
+  },
+  cors: {
+    origins: process.env.CORS_ORIGINS?.split(",") || [],
+    // methods: process.env.CORS_METHODS?.split(",") || ["GET", "POST", "PUT", "DELETE"],
   },
   docs: {
     outputFile: path.join(import.meta.dirname, "../docs/api_v1_docs.json"),

@@ -5,8 +5,8 @@ import ReviewService from "../services/ReviewService.mjs"
 class DishController {
   static async getDishesList(req, res) {
     try {
-      const dishes = await DishService.getAll()
-      res.json({ success: true, data: dishes })
+      const { documents, count, page, perPage } = await DishService.getAllWithQuery(req.query)
+      res.json({ success: true, page, perPage, count, data: documents })
     } catch (error) {
       res.status(500).json({ success: false, msg: error.message })
     }
@@ -31,8 +31,7 @@ class DishController {
   }
   static async createOrUpdateDish(req, res) {
     const errors = validationResult(req)
-    if (!errors.isEmpty())
-      return res.status(400).json({ success: false, msg: errors.array() })
+    if (!errors.isEmpty()) return res.status(400).json({ success: false, msg: errors.array() })
 
     const id = req.params.id
 

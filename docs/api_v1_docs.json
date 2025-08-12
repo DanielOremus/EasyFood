@@ -5,11 +5,6 @@
     "description": "Ця сторінка описує swagger документацію REST API для EasyFood",
     "version": "1.0.0"
   },
-  "servers": [
-    {
-      "url": "http://localhost:3000/api/v1"
-    }
-  ],
   "tags": [
     {
       "name": "Auth",
@@ -37,20 +32,13 @@
     }
   ],
   "paths": {
-    "/users/": {
+    "/users": {
       "get": {
         "tags": ["Users"],
         "description": "",
         "responses": {
           "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/requestBodies/user_login"
-                }
-              }
-            }
+            "description": "OK"
           },
           "500": {
             "description": "Internal Server Error"
@@ -749,6 +737,7 @@
     },
     "/dishes/": {
       "get": {
+        "tags": ["Dishes"],
         "description": "",
         "responses": {
           "200": {
@@ -1061,12 +1050,15 @@
               "properties": {
                 "username": {
                   "type": "string",
-                  "example": "Anna SMith"
+                  "example": "Anna SMith",
+                  "minLength": 3,
+                  "maxLength": 50
                 },
                 "email": {
                   "type": "string",
                   "format": "email",
-                  "example": "anna.smith@example.com"
+                  "example": "anna.smith@example.com",
+                  "maxLength": 255
                 },
                 "phone": {
                   "type": "string",
@@ -1074,7 +1066,9 @@
                 },
                 "password": {
                   "type": "string",
-                  "example": "password"
+                  "example": "password",
+                  "minLength": 3,
+                  "maxLength": 16
                 }
               },
               "required": ["username", "email", "phone", "password"]
@@ -1099,6 +1093,63 @@
                 }
               },
               "required": ["email", "password"]
+            }
+          }
+        }
+      },
+      "user_password": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "password": {
+                  "type": "string",
+                  "example": "your_old_password"
+                },
+                "newPassword": {
+                  "type": "string",
+                  "example": "your_new_password",
+                  "minLength": 3,
+                  "maxLength": 16
+                }
+              }
+            }
+          }
+        }
+      },
+      "dish": {
+        "content": {
+          "multipart/form-data": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "restaurantId": {
+                  "type": "string",
+                  "example": "1"
+                },
+                "name": {
+                  "type": "string",
+                  "example": "Borsch",
+                  "maxLength": 50
+                },
+                "description": {
+                  "type": "string",
+                  "example": "Ukrainian beets soup with sour cream",
+                  "maxLength": 500
+                },
+                "price": {
+                  "type": "number",
+                  "format": "double",
+                  "example": 49.99,
+                  "minimum": 0
+                },
+                "imageUrl": {
+                  "type": "string",
+                  "example": "path/image.png",
+                  "maxLength": 255
+                }
+              }
             }
           }
         }

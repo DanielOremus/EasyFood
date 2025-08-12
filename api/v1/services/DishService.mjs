@@ -12,7 +12,55 @@ import Category from "../models/Category.mjs"
 import SubcategoryService from "./SubcategoryService.mjs"
 
 class DishService extends CRUDManager {
-  async getAll(
+  static fieldsConfig = [
+    {
+      fieldName: "name",
+      filterCategory: "search",
+    },
+    {
+      fieldName: "price",
+      filterCategory: "range",
+    },
+    {
+      fieldName: "kcal",
+      filterCategory: "range",
+    },
+    {
+      fieldName: "weight",
+      filterCategory: "range",
+    },
+    {
+      fieldName: "proteins",
+      filterCategory: "range",
+    },
+    {
+      fieldName: "carbs",
+      filterCategory: "range",
+    },
+    {
+      fieldName: "rating",
+      filterCategory: "range",
+    },
+    {
+      fieldName: "restaurantId",
+      filterCategory: "list",
+    },
+    {
+      fieldName: "subcategoryId",
+      filterCategory: "list",
+    },
+    {
+      fieldName: "categoryId",
+      filterCategory: "list",
+      refModel: Subcategory,
+    },
+  ]
+  static paginationDefaultData = {
+    page: 0,
+    perPage: 8,
+  }
+  async getAllWithQuery(
+    reqQuery,
     filters = {},
     projection = { exclude: ["restaurantId", "subcategoryId"] },
     populateParams = {
@@ -26,7 +74,15 @@ class DishService extends CRUDManager {
     options = {}
   ) {
     try {
-      return await super.getAll(filters, projection, populateParams, options)
+      return await super.getAllWithQuery(
+        reqQuery,
+        DishService.fieldsConfig,
+        DishService.paginationDefaultData,
+        filters,
+        projection,
+        populateParams,
+        options
+      )
     } catch (error) {
       debugLog(error)
       throw error

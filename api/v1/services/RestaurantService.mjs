@@ -1,6 +1,5 @@
 import CustomError from "../../../utils/CustomError.mjs"
 import { debugLog } from "../../../utils/logger.mjs"
-import { setValidQueryPagination } from "../../../utils/selectionHelpers/paginationHelpers.mjs"
 import { sequelize } from "../../../config/db.mjs"
 import CRUDManager from "../models/CRUDManager/index.mjs"
 import Dish from "../models/Dish.mjs"

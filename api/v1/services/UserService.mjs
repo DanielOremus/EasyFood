@@ -9,7 +9,11 @@ import { debugLog } from "../../../utils/logger.mjs"
 import { Op } from "sequelize"
 
 class UserService extends CRUDManager {
-  async getAll(filters = {}, projection = ["id", "username", "avatarUrl"], populateParams = null) {
+  async getAll(
+    filters = {},
+    projection = ["id", "username", "avatarUrl", "isAdmin"],
+    populateParams = null
+  ) {
     return await super.getAll(filters, projection, populateParams)
   }
   async getById(id, projection = { exclude: ["password"] }, populateParams = null, options = {}) {

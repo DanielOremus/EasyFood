@@ -10,17 +10,17 @@ export const hashPassword = async (password) => {
 export const setRefreshTokenCookie = (res, refreshToken) => {
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
-    secure: config.appEnv === "production" ? true : false,
+    secure: config.api.protocol === "https",
     sameSite: "strict",
     maxAge: config.jwt.refresh.expireTime,
-    path: "/api/v1/auth",
+    path: `/api/${config.api.version}/auth`,
   })
 }
 export const clearRefreshTokenCookie = (res) => {
   res.clearCookie("refreshToken", {
     httpOnly: true,
-    secure: config.appEnv === "production",
+    secure: config.api.protocol === "https",
     sameSite: "strict",
-    path: "/api/v1/auth",
+    path: `/api/${config.api.version}/auth`,
   })
 }

@@ -1,6 +1,5 @@
 import UserService from "../api/v1/services/UserService.mjs"
 import JWTHelper from "../utils/JWTHelper.mjs"
-import config from "../config/default.mjs"
 async function setUserFromToken(req) {
   const bearer = req.headers.authorization
   const token = JWTHelper.parseBearer(bearer, req.headers)
@@ -13,8 +12,7 @@ function getAuthMiddleware(func) {
     try {
       await setUserFromToken(req)
 
-      if (func && !func(req))
-        return res.status(403).json({ success: false, msg: "Forbidden" })
+      if (func && !func(req)) return res.status(403).json({ success: false, msg: "Forbidden" })
 
       next()
     } catch (error) {

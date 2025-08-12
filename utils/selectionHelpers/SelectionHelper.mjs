@@ -2,7 +2,7 @@ import QueryParser from "./QueryParser.mjs"
 import { Op } from "sequelize"
 
 class SelectionHelper {
-  static applyFilters(whereOptions, filters) {
+  static applyFilters(whereOptions, includeWhereOptions, filters) {
     for (const filterObj of filters) {
       switch (filterObj.filterType) {
         case "minValue":
@@ -16,9 +16,21 @@ class SelectionHelper {
           }
           break
         case "in":
-          whereOptions[filterObj.fieldName] = {
-            [Op.in]: filterObj.filterValue,
+          if (filterObj.refModel) {
+            includeWhereOptions.push({
+              model: filterObj.refModel,
+              where: {
+                [filterObj.fieldName]: {
+                  [Op.in]: filterObj.filterValue,
+                },
+              },
+            })
+          } else {
+            whereOptions[filterObj.fieldName] = {
+              [Op.in]: filterObj.filterValue,
+            }
           }
+
           break
         case "search":
           whereOptions[filterObj.fieldName] = {
@@ -30,7 +42,7 @@ class SelectionHelper {
           console.log(`Unsupported filterType: ${filterObj.filterType}`)
       }
     }
-    return whereOptions
+    return { whereOptions, includeWhereOptions }
   }
   static applyActions(options, actions) {
     actions.forEach((actionObj) => {
@@ -55,7 +67,12 @@ class SelectionHelper {
     const { actions, filters } = QueryParser.parse(reqQuery, fieldsConfig)
 
     let optionsObj = {}
-    if (filters.length) optionsObj = this.applyFilters(optionsObj, filters)
+    let filtersOpts
+    if (filters.length) {
+      filtersOpts = this.applyFilters(optionsObj, [], filters)
+      optionsObj.where = filtersOpts.whereOptions
+      optionsObj.include = filtersOpts.includeWhereOptions
+    }
     if (actions.length) optionsObj = this.applyActions(optionsObj, actions)
 
     return optionsObj
@@ -65,8 +82,9 @@ class SelectionHelper {
     console.log("filters-----------------")
 
     console.log(filters)
-    if (filters.length) filterOptions = this.applyFilters(filterOptions, filters)
-    return filterOptions
+    let result
+    if (filters.length) result = this.applyFilters(filterOptions, [], filters)
+    return { filterOptions: result.whereOptions, includeFilterOptions: result.includeWhereOptions }
   }
   static applyActionsSelection(reqQuery) {
     const actions = QueryParser.parseActions(reqQuery)

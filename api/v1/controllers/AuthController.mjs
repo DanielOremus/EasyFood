@@ -58,6 +58,7 @@ class AuthController {
             id: user.id,
             username: user.username,
             points: user.points,
+            isAdmin: user.isAdmin,
           },
         },
       })

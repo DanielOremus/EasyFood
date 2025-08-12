@@ -75,7 +75,7 @@ class AuthService {
     try {
       const user = await UserService.getOne(
         { email: data.email },
-        ["id", "username", "email", "points", "password"],
+        ["id", "username", "email", "points", "password", "isAdmin"],
         null
       )
       if (!user) throw new CustomError("Invalid email or password", 401)

@@ -28,15 +28,15 @@ export const initApp = async (app) => {
     helmet({
       contentSecurityPolicy: false,
       hsts: config.appEnv === "production" ? { maxAge: 31536000, includeSubDomains: true } : false,
+      referrerPolicy: { policy: "no-referrer" },
+      frameguard: { action: "deny" },
+      xssFilter: true,
     })
   )
   //Cors
   app.use(
     cors({
-      origin:
-        config.appEnv === "production"
-          ? ["http://localhost:3000", "https://your-frontend-domain.com"]
-          : "*",
+      origin: config.appEnv === "production" ? config.cors.origins : ["http://localhost:3000"],
       credentials: true,
       methods: ["GET", "POST", "PUT", "DELETE"],
       allowedHeaders: ["Content-Type", "Authorization"],
@@ -44,8 +44,8 @@ export const initApp = async (app) => {
   )
 
   app.use(logger("dev"))
-  app.use(express.json())
-  app.use(express.urlencoded({ extended: false }))
+  app.use(express.json({ limit: "1mb" }))
+  app.use(express.urlencoded({ limit: "1mb", extended: false }))
   app.use(cookieParser())
   app.use(express.static(path.join(__dirname, "../../public")))
   app.use("/uploads", express.static(path.join(__dirname, "../../uploads")))

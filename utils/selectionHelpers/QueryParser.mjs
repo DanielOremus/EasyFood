@@ -34,12 +34,13 @@ class QueryParser {
 
     return range
   }
-  static list(fieldName, fieldValue) {
+  static list(fieldName, fieldValue, refModel) {
     return [
       {
         fieldName,
         filterType: "in",
         filterValue: fieldValue.split(","),
+        refModel,
       },
     ]
   }
@@ -56,9 +57,9 @@ class QueryParser {
   static parseFilters(query, fieldsConfig = []) {
     const filters = []
 
-    fieldsConfig.forEach(({ fieldName, filterCategory }) => {
+    fieldsConfig.forEach(({ fieldName, filterCategory, refModel }) => {
       if (query[fieldName]) {
-        filters.push(...this[filterCategory](fieldName, query[fieldName]))
+        filters.push(...this[filterCategory](fieldName, query[fieldName], refModel))
       }
     })
 
@@ -68,11 +69,13 @@ class QueryParser {
     const actions = []
     if (query.sort) {
       const [field, order] = query.sort.split(":")
-      actions.push({
-        type: "sort",
-        field,
-        order: order.toUpperCase(), //order=desc/asc
-      })
+
+      if (["desc", "asc"].includes(order))
+        actions.push({
+          type: "sort",
+          field,
+          order: order.toUpperCase(), //order=desc/asc
+        })
     }
     if (query.page >= 0 && query.perPage > 0) {
       actions.push({
