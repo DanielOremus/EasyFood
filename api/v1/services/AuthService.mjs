@@ -132,7 +132,7 @@ class AuthService {
 
       const accessToken = JWTHelper.prepareAccessToken({ userId: user.id })
 
-      return { user, accessToken }
+      return { accessToken }
     } catch (error) {
       debugLog(error)
       throw error

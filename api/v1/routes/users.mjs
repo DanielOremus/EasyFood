@@ -1,11 +1,6 @@
 import { Router } from "express"
 import UserController from "../controllers/UserController.mjs"
-import {
-  ensureAccOwnerOrAdmin,
-  ensureAdmin,
-  ensureAuthenticated,
-  ownerChecker,
-} from "../../../middlewares/auth.mjs"
+import { ensureAccOwnerOrAdmin, ensureAdmin, ownerChecker } from "../../../middlewares/auth.mjs"
 import { checkSchema } from "express-validator"
 import UserValidator from "../../../validators/UserValidator.mjs"
 import upload from "../../../middlewares/multer.mjs"

@@ -1,15 +1,11 @@
 import { validationResult } from "express-validator"
 import AuthService from "../services/AuthService.mjs"
-import {
-  clearRefreshTokenCookie,
-  setRefreshTokenCookie,
-} from "../../../utils/authHelpers.mjs"
+import { clearRefreshTokenCookie, setRefreshTokenCookie } from "../../../utils/authHelpers.mjs"
 
 class AuthController {
   static async register(req, res) {
     const errors = validationResult(req)
-    if (!errors.isEmpty())
-      return res.status(400).json({ success: false, msg: errors.array() })
+    if (!errors.isEmpty()) return res.status(400).json({ success: false, msg: errors.array() })
 
     const { username, email, phone, password } = req.body
     try {
@@ -43,8 +39,7 @@ class AuthController {
   }
   static async login(req, res) {
     const errors = validationResult(req)
-    if (!errors.isEmpty())
-      return res.status(400).json({ success: false, msg: errors.array() })
+    if (!errors.isEmpty()) return res.status(400).json({ success: false, msg: errors.array() })
 
     const { email, password } = req.body
     try {
@@ -73,18 +68,14 @@ class AuthController {
 
   static async refresh(req, res) {
     const refreshToken = req.cookies.refreshToken
+
     try {
-      const { user, accessToken } = await AuthService.refresh(refreshToken, res)
+      const { accessToken } = await AuthService.refresh(refreshToken, res)
 
       res.json({
         success: true,
         data: {
           accessToken,
-          user: {
-            id: user.id,
-            username: user.username,
-            points: user.points,
-          },
         },
       })
     } catch (error) {

@@ -1,5 +1,5 @@
 import { configDotenv } from "dotenv"
-
+import path from "path"
 configDotenv({ quiet: true })
 
 const config = Object.freeze({
@@ -20,6 +20,9 @@ const config = Object.freeze({
       secret: process.env.JWT_ACCESS_SECRET,
       expireTime: 15 * 60 * 1000, //15 minutes
     },
+  },
+  docs: {
+    outputFile: path.join(import.meta.dirname, "../docs/api_v1_docs.json"),
   },
 })
 export default config

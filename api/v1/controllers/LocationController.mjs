@@ -12,8 +12,7 @@ class LocationController {
   }
   static async addUserLocation(req, res) {
     const errors = validationResult(req)
-    if (!errors.isEmpty())
-      return res.status(400).json({ success: false, msg: errors.array() })
+    if (!errors.isEmpty()) return res.status(400).json({ success: false, msg: errors.array() })
 
     const { address, lat, lng } = req.body
     const id = req.params.id
@@ -29,7 +28,10 @@ class LocationController {
         success: true,
         msg: "Location added",
         data: {
-          locationId: location.id,
+          id: location.id,
+          address: location.address,
+          lat: location.lat,
+          lng: location.lng,
         },
       })
     } catch (error) {
