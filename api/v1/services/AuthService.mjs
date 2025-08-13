@@ -75,7 +75,7 @@ class AuthService {
     try {
       const user = await UserService.getOne(
         { email: data.email },
-        ["id", "username", "email", "points", "password", "isAdmin"],
+        ["id", "username", "email", "points", "password", "isAdmin", "avatarUrl"],
         null
       )
       if (!user) throw new CustomError("Invalid email or password", 401)
@@ -124,6 +124,8 @@ class AuthService {
       const user = await UserService.getById(storedToken.userId, [
         "id",
         "username",
+        "isAdmin",
+        "avatarUrl",
         "points",
       ]).catch((error) => {
         if (error instanceof CustomError) throw new CustomError("User not found", 401)
@@ -132,7 +134,7 @@ class AuthService {
 
       const accessToken = JWTHelper.prepareAccessToken({ userId: user.id })
 
-      return { accessToken }
+      return { accessToken, user }
     } catch (error) {
       debugLog(error)
       throw error

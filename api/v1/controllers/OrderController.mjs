@@ -3,7 +3,7 @@ import { validationResult } from "express-validator"
 
 class OrderController {
   static async getOrdersByUserId(req, res) {
-    const userId = req.params.userId
+    const userId = req.params.id
     try {
       const { documents, count, page, perPage } = await OrderService.getAllByUserId(
         userId,

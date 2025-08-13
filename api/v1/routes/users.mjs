@@ -1,6 +1,11 @@
 import { Router } from "express"
 import UserController from "../controllers/UserController.mjs"
-import { ensureAccOwnerOrAdmin, ensureAdmin, ownerChecker } from "../../../middlewares/auth.mjs"
+import {
+  ensureAccOwnerOrAdmin,
+  requireAdmin,
+  ownerChecker,
+  requireAuth,
+} from "../../../middlewares/auth.mjs"
 import { checkSchema } from "express-validator"
 import UserValidator from "../../../validators/UserValidator.mjs"
 import upload from "../../../middlewares/multer.mjs"
@@ -14,7 +19,7 @@ import RewardValidator from "../../../validators/RewardValidator.mjs"
 
 const router = Router()
 
-router.get("/", ensureAdmin, UserController.getUsersList)
+router.get("/", requireAdmin, UserController.getUsersList)
 
 router.get(
   "/:id/locations",
@@ -22,13 +27,11 @@ router.get(
   LocationController.getUserLocations
 )
 
-router.get(
-  "/:userId/orders",
-  ensureAccOwnerOrAdmin("params", "userId"),
-  OrderController.getOrdersByUserId
-)
+router.get("/:id/orders", ensureAccOwnerOrAdmin("params", "id"), OrderController.getOrdersByUserId)
 
-router.get("/:id", ensureAccOwnerOrAdmin("params", "id"), UserController.getUserById)
+router.get("/me", requireAuth, UserController.getOwnProfile)
+
+router.get("/:id", requireAdmin, UserController.getUserById)
 
 router.get(
   "/:id/rewards",
@@ -54,7 +57,7 @@ router.post(
 
 router.post(
   "/:id/rewards",
-  ensureAdmin,
+  requireAdmin,
   checkSchema(RewardValidator.addForUserSchema),
   RewardController.addRewardForUser
 )

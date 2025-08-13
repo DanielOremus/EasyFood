@@ -19,7 +19,18 @@ class UserController {
       res.status(error.code || 500).json({ success: false, msg: error.message })
     }
   }
-  //TODO: add session auth
+  static async getOwnProfile(req, res) {
+    try {
+      const user = await UserService.getById(req.user.id)
+
+      res.json({
+        success: true,
+        data: user,
+      })
+    } catch (error) {
+      res.status(error.code || 500).json({ success: false, msg: error.message })
+    }
+  }
   static async updateUserById(req, res) {
     const errors = validationResult(req)
     if (!errors.isEmpty()) return res.status(400).json({ success: false, msg: errors.array() })

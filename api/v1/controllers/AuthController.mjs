@@ -58,6 +58,7 @@ class AuthController {
             id: user.id,
             username: user.username,
             points: user.points,
+            avatarUrl: user.avatarUrl,
             isAdmin: user.isAdmin,
           },
         },
@@ -71,12 +72,13 @@ class AuthController {
     const refreshToken = req.cookies.refreshToken
 
     try {
-      const { accessToken } = await AuthService.refresh(refreshToken, res)
+      const { accessToken, user } = await AuthService.refresh(refreshToken, res)
 
       res.json({
         success: true,
         data: {
           accessToken,
+          user,
         },
       })
     } catch (error) {

@@ -4,7 +4,7 @@ async function setUserFromToken(req) {
   const bearer = req.headers.authorization
   const token = JWTHelper.parseBearer(bearer, req.headers)
 
-  req.user = await UserService.getById(token.userId)
+  req.user = await UserService.getById(token.userId, ["id", "isAdmin"])
 }
 
 function getAuthMiddleware(func) {
@@ -21,8 +21,8 @@ function getAuthMiddleware(func) {
   }
 }
 
-export const ensureAuthenticated = getAuthMiddleware()
-export const ensureAdmin = getAuthMiddleware((req) => req.user?.isAdmin)
+export const requireAuth = getAuthMiddleware()
+export const requireAdmin = getAuthMiddleware((req) => req.user?.isAdmin)
 export const ownerChecker = (fieldSource, fieldName) =>
   getAuthMiddleware((req) => {
     const userId = req[fieldSource][fieldName]

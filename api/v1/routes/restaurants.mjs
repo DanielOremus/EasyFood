@@ -1,7 +1,7 @@
 import { Router } from "express"
 import DishController from "../controllers/DishController.mjs"
 import RestaurantController from "../controllers/RestaurantController.mjs"
-import { ensureAdmin } from "../../../middlewares/auth.mjs"
+import { requireAdmin } from "../../../middlewares/auth.mjs"
 import upload from "../../../middlewares/multer.mjs"
 import { checkSchema } from "express-validator"
 import RestaurantValidator from "../../../validators/RestaurantValidator.mjs"
@@ -16,7 +16,7 @@ router.get("/:restaurantId/dishes", DishController.getRestaurantDishes)
 
 router.post(
   "/",
-  ensureAdmin,
+  requireAdmin,
   upload.single("image"),
   checkSchema(RestaurantValidator.defaultSchema),
   RestaurantController.createOrUpdateRestaurant
@@ -24,12 +24,12 @@ router.post(
 
 router.put(
   "/:id",
-  ensureAdmin,
+  requireAdmin,
   upload.single("image"),
   checkSchema(RestaurantValidator.defaultSchema),
   RestaurantController.createOrUpdateRestaurant
 )
 
-router.delete("/:id", ensureAdmin, RestaurantController.deleteRestaurant)
+router.delete("/:id", requireAdmin, RestaurantController.deleteRestaurant)
 
 export default router
