@@ -22,6 +22,7 @@ export const initApp = async (app) => {
 
   app.set("views", path.join(__dirname, "../../views"))
   app.set("view engine", "ejs")
+  app.set("trust proxy", 1)
 
   //Helmet
   app.use(

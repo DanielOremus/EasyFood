@@ -2,6 +2,8 @@ import { configDotenv } from "dotenv"
 import path from "path"
 configDotenv({ quiet: true })
 
+//TODO: add updates from session app
+
 const config = Object.freeze({
   appEnv: process.env.APP_ENV || "production",
   api: {
