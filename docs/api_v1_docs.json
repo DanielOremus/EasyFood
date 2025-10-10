@@ -12,7 +12,7 @@
     },
     {
       "name": "Users",
-      "description": "Операції, що стосуються юзерів"
+      "description": "Операції, що стосуються користувачів"
     },
     {
       "name": "Orders",
@@ -35,20 +35,63 @@
     "/users": {
       "get": {
         "tags": ["Users"],
-        "description": "",
+        "description": "Отримати список користувачів (можливо тільки для адміна)",
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "username": {
+                            "type": "string"
+                          },
+                          "avatarUrl": {
+                            "type": "string",
+                            "nullable": true,
+                            "default": "path/to/file.png"
+                          },
+                          "isAdmin": {
+                            "type": "boolean",
+                            "default": false
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
             "description": "Internal Server Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
           }
         }
       }
     },
     "/users/{id}/locations": {
       "get": {
-        "description": "",
+        "tags": ["Users"],
+        "description": "Отримати список локацій користувача за id (можливо для адміна або власника акаунту)",
         "parameters": [
           {
             "name": "id",
@@ -61,15 +104,40 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Location"
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
             "description": "Internal Server Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "description": "Користувач не знайдений"
           }
         }
       },
       "post": {
-        "description": "",
+        "tags": ["Users"],
+        "description": "Додати локацію (адресу) для користувача (можливо лише для власника акаунту)",
         "parameters": [
           {
             "name": "id",
@@ -82,43 +150,52 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "msg": {
+                      "type": "string",
+                      "default": "Location added"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Location"
+                    }
+                  }
+                }
+              }
+            }
           },
           "400": {
             "description": "Bad Request"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
           },
           "500": {
             "description": "Internal Server Error"
           }
         },
         "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "address": {
-                    "example": "any"
-                  },
-                  "lat": {
-                    "example": "any"
-                  },
-                  "lng": {
-                    "example": "any"
-                  }
-                }
-              }
-            }
-          }
+          "$ref": "#/components/requestBodies/user_location"
         }
       }
     },
-    "/users/{userId}/orders": {
+    "/users/{id}/orders": {
       "get": {
-        "description": "",
+        "tags": ["Users"],
+        "description": "Отримати список замовлень користувача за id (можливо лише для адміна або власника акаунту)",
         "parameters": [
           {
-            "name": "userId",
+            "name": "id",
             "in": "path",
             "required": true,
             "schema": {
@@ -129,6 +206,12 @@
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
           },
           "500": {
             "description": "Internal Server Error"
@@ -139,7 +222,7 @@
     "/users/{id}": {
       "get": {
         "tags": ["Users"],
-        "description": "",
+        "description": "Отримати користувача за id (можливо тільки для адміна)",
         "parameters": [
           {
             "name": "id",
@@ -152,7 +235,65 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true
+                    },
+                    "data": {
+                      "type": "object",
+
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "username": {
+                          "type": "string"
+                        },
+                        "email": {
+                          "type": "string",
+                          "format": "email"
+                        },
+                        "phone": {
+                          "type": "string",
+                          "format": "phone"
+                        },
+                        "avatarUrl": {
+                          "type": "string",
+                          "nullable": true,
+                          "default": "path/to/file.png"
+                        },
+                        "points": {
+                          "type": "integer"
+                        },
+                        "isAdmin": {
+                          "type": "boolean",
+                          "default": false
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "format": "date-time"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "description": "User not found"
           },
           "500": {
             "description": "Internal Server Error"
@@ -190,6 +331,7 @@
     },
     "/users/{id}/rewards": {
       "get": {
+        "tags": ["Users"],
         "description": "",
         "parameters": [
           {
@@ -211,6 +353,7 @@
         }
       },
       "post": {
+        "tags": ["Users"],
         "description": "",
         "parameters": [
           {
@@ -251,6 +394,7 @@
     },
     "/users/{id}/cards": {
       "get": {
+        "tags": ["Users"],
         "description": "",
         "parameters": [
           {
@@ -272,6 +416,7 @@
         }
       },
       "post": {
+        "tags": ["Users"],
         "description": "",
         "parameters": [
           {
@@ -626,7 +771,8 @@
     },
     "/orders/": {
       "post": {
-        "description": "",
+        "tags": ["Orders"],
+        "description": "Створення замовлення",
         "responses": {
           "201": {
             "description": "Created"
@@ -639,36 +785,7 @@
           }
         },
         "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "restaurantId": {
-                    "example": "any"
-                  },
-                  "items": {
-                    "example": "any"
-                  },
-                  "deliveryAddress": {
-                    "example": "any"
-                  },
-                  "paymentMethod": {
-                    "example": "any"
-                  },
-                  "cardId": {
-                    "example": "any"
-                  },
-                  "usePoints": {
-                    "example": "any"
-                  },
-                  "rewardCode": {
-                    "example": "any"
-                  }
-                }
-              }
-            }
-          }
+          "$ref": "#/components/requestBodies/order"
         }
       }
     },
@@ -948,7 +1065,7 @@
         }
       }
     },
-    "/rewards/": {
+    "/rewards": {
       "get": {
         "description": "",
         "responses": {
@@ -964,9 +1081,53 @@
   },
 
   "components": {
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "default": false
+          },
+          "msg": {
+            "type": "string"
+          }
+        },
+        "required": ["success", "msg"]
+      },
+      "Location": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "address": {
+            "type": "string"
+          },
+          "lat": {
+            "type": "number",
+            "minimum": -90,
+            "maximum": 90
+          },
+          "lng": {
+            "type": "number",
+            "minimum": -180,
+            "maximum": 180
+          }
+        },
+        "required": ["address", "lat", "lng"]
+      }
+    },
     "responses": {
-      "UnauthorizedError": {
-        "description": "Access token is missing or invalid"
+      "Unauthorized": {
+        "description": "User is not authorized"
+      },
+      "EndpointNotFound": {
+        "description": "Endpoint not found"
+      },
+      "Forbidden": {
+        "description": "Access is forbidden"
       }
     },
     "securitySchemes": {
@@ -1118,6 +1279,15 @@
           }
         }
       },
+      "user_location": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Location"
+            }
+          }
+        }
+      },
       "dish": {
         "content": {
           "multipart/form-data": {
@@ -1148,6 +1318,85 @@
                   "type": "string",
                   "example": "path/image.png",
                   "maxLength": 255
+                }
+              }
+            }
+          }
+        }
+      },
+      "order": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": ["restaurantId", "items", "deliveryAddress", "paymentMethod"],
+              "properties": {
+                "restaurantId": {
+                  "type": "string",
+                  "example": "1"
+                },
+                "items": {
+                  "type": "array",
+                  "minItems": 1,
+                  "description": "List of ordered items",
+
+                  "items": {
+                    "type": "object",
+                    "required": ["dishId", "quantity"],
+                    "properties": {
+                      "dishId": {
+                        "type": "string",
+                        "description": "Dish ID",
+                        "example": "45"
+                      },
+                      "quantity": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "description": "Quantity of the dish",
+                        "example": 2
+                      },
+                      "notes": {
+                        "type": "string",
+                        "nullable": true,
+                        "description": "Optional notes for this dish",
+                        "example": "Extra spicy"
+                      },
+                      "sides": {
+                        "type": "array",
+                        "description": "Optional array of side item IDs",
+                        "items": {
+                          "type": "string",
+                          "description": "Side ID",
+                          "example": "12"
+                        }
+                      }
+                    }
+                  }
+                },
+                "deliveryAddress": {
+                  "type": "string",
+                  "minLength": 5,
+                  "maxLength": 255,
+                  "description": "Delivery address for the order",
+                  "example": "123 Main Street, Springfield"
+                },
+                "paymentMethod": {
+                  "type": "string",
+                  "enum": ["cash", "card"],
+                  "description": "Payment method used for this order",
+                  "example": "card"
+                },
+                "usePoints": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "description": "Optional number of reward points to use",
+                  "example": 100
+                },
+                "rewardCode": {
+                  "type": "string",
+                  "maxLength": 50,
+                  "description": "Optional reward code",
+                  "example": "WELCOME2025"
                 }
               }
             }
