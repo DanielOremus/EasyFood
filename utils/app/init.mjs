@@ -28,7 +28,10 @@ export const initApp = async (app) => {
   app.use(
     helmet({
       contentSecurityPolicy: false,
-      hsts: config.appEnv === "production" ? { maxAge: 31536000, includeSubDomains: true } : false,
+      hsts:
+        config.appEnv === "production"
+          ? { maxAge: 31536000, includeSubDomains: true }
+          : false,
       referrerPolicy: { policy: "no-referrer" },
       frameguard: { action: "deny" },
       xssFilter: true,
@@ -37,7 +40,7 @@ export const initApp = async (app) => {
   //Cors
   app.use(
     cors({
-      origin: config.appEnv === "production" ? config.cors.origins : ["http://localhost:3000"],
+      origin: config.appEnv === "production" ? config.cors.origins : "*",
       credentials: true,
       methods: ["GET", "POST", "PUT", "DELETE"],
       allowedHeaders: ["Content-Type", "Authorization"],
