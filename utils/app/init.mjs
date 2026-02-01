@@ -35,7 +35,7 @@ export const initApp = async (app) => {
       referrerPolicy: { policy: "no-referrer" },
       frameguard: { action: "deny" },
       xssFilter: true,
-    })
+    }),
   )
   //Cors
   app.use(
@@ -43,11 +43,11 @@ export const initApp = async (app) => {
       origin:
         config.appEnv === "production"
           ? config.cors.origins
-          : ["http://localhost:5173"],
+          : ["http://localhost:5173", "https://localhost:5173"],
       credentials: true,
       methods: ["GET", "POST", "PUT", "DELETE"],
       allowedHeaders: ["Content-Type", "Authorization"],
-    })
+    }),
   )
 
   app.use(logger("dev"))

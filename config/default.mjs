@@ -37,7 +37,10 @@ const config = Object.freeze({
     },
   },
   cors: {
-    origins: process.env.CORS_ORIGINS?.split(",") || [],
+    origins: process.env.CORS_ORIGINS?.split(",") || [
+      "http://localhost:5173",
+      "https://localhost:5173",
+    ],
     // methods: process.env.CORS_METHODS?.split(",") || ["GET", "POST", "PUT", "DELETE"],
   },
   docs: {
